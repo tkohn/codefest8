@@ -1,8 +1,32 @@
 package de.codefest8.gamification8.models;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
+import de.codefest8.gamification8.UserMessagesHandler;
 
 public class TripDataDTO {
+    private static final String LOG_TAG = "TripDataDTO";
+
+    private static final String FIELD_ID = "id";
+    private static final String FIELD_TRIP = "trip";
+    private static final String FIELD_DATETIME = "datetime";
+    private static final String FIELD_GPS_SPEED_MS = "GPSSpeedMS";
+    private static final String FIELD_GPS_SPEED_KMH = "GPSSpeedKMH";
+    private static final String FIELD_OBD_SPEED_KMH = "OBDSpeedKMH";
+    private static final String FIELD_ALTITUDE = "altitude";
+    private static final String FIELD_ENGINE_LOAD = "engineLoad";
+    private static final String FIELD_ENGINE_RPM = "engineRPM";
+    private static final String FIELD_THROTTLE_POSITION = "throttlePosition";
+    private static final String FIELD_AIR_TEMP = "airTemperature";
+    private static final String FIELD_FUEL_LEVEL = "fuelLevel";
+    private static final String FIELD_KM_PER_LITER = "KMPerLiter";
+
     private long id;
     private TripDTO trip;
     private Timestamp datetime;
@@ -16,6 +40,7 @@ public class TripDataDTO {
     private double airTemperature;
     private double fuelLevel;
     private double KMPerLiter;
+
     public TripDataDTO() {
     }
     public long getId() {
@@ -95,5 +120,30 @@ public class TripDataDTO {
     }
     public void setKMPerLiter(double KMPerLiter) {
         this.KMPerLiter = KMPerLiter;
+    }
+
+    public static TripDataDTO fromJson(JSONObject object, TripDTO trip) {
+        TripDataDTO tripData = new TripDataDTO();
+        try {
+            tripData.setId(object.getLong(FIELD_ID));
+            tripData.setGPSSpeedMS(object.getDouble(FIELD_GPS_SPEED_MS));
+            tripData.setGPSSpeedKMH(object.getDouble(FIELD_GPS_SPEED_KMH));
+            tripData.setOBDSpeedKMH(object.getDouble(FIELD_OBD_SPEED_KMH));
+            tripData.setAltitude(object.getDouble(FIELD_ALTITUDE));
+            tripData.setEngineLoad(object.getDouble(FIELD_ENGINE_LOAD));
+            tripData.setEngineRPM(object.getDouble(FIELD_ENGINE_RPM));
+            tripData.setThrottlePosition(object.getDouble(FIELD_THROTTLE_POSITION));
+            tripData.setAirTemperature(object.getDouble(FIELD_AIR_TEMP));
+            tripData.setFuelLevel(object.getDouble(FIELD_FUEL_LEVEL));
+            tripData.setKMPerLiter(object.getDouble(FIELD_KM_PER_LITER));
+            tripData.setDatetime(new Timestamp(object.getLong(FIELD_DATETIME)));
+            tripData.setTrip(trip);
+
+        } catch (JSONException ex) {
+            UserMessagesHandler.getInstance().registerError("Error while parsing UserDTO JSON.");
+            Log.e(LOG_TAG, ex.toString());
+        }
+
+        return tripData;
     }
 }
