@@ -13,6 +13,7 @@ import de.codefest8.gamification8.models.Track;
  * Created by koerfer on 07.03.2015.
  */
 public class HistoryElementAdapter extends ArrayAdapter<Track> {
+
     private final Context context;
     private final Track[] values;
 
@@ -28,7 +29,7 @@ public class HistoryElementAdapter extends ArrayAdapter<Track> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.row_history, parent, false);
         TextView textView = (TextView) view.findViewById(R.id.label);
-        textView.setText(values[position].GetDateTime());
+        textView.setText(values[position].getDateTimeString());
         return view;
     }
 }

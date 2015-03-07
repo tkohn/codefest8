@@ -9,27 +9,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-
-import de.codefest8.gamification8.network.DummyResponseCallback;
-import de.codefest8.gamification8.network.UserResolver;
 
 
 public class StartScreen extends ActionBarActivity {
-    private final static String ACTIVITY_NAME = "StartScreen";
+    private final String ACTIVITY_NAME = "StartScreen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-        UserMessagesHandler.getInstance().setApplicationContext(getApplicationContext());
-
         initDrawer();
-
-        UserResolver ur = new UserResolver(new DummyResponseCallback(), 3);
-        ur.doRequest();
     }
 
 
