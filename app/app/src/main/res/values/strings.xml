@@ -14,11 +14,11 @@
         <item>About</item>
     </string-array>
     <string-array name="drawer_elements_icon">
-        <item>@mipmap/history</item>
-        <item>@mipmap/history</item>
+        <item>@mipmap/home</item>
+        <item>@mipmap/friends</item>
         <item>@mipmap/history</item>
         <item>@mipmap/achievements</item>
-        <item>@mipmap/achievements</item>
+        <item>@mipmap/about</item>
     </string-array>
     <string name="title_activity_history">Previous Cruises</string>
     <string name="drawer_open">Drawer open</string>
