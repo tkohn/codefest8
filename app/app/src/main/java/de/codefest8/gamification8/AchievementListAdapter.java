@@ -7,16 +7,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import de.codefest8.gamification8.models.AchievementDTO;
 import de.codefest8.gamification8.models.TripDTO;
 
-public class TrackHistoryAdapter extends ArrayAdapter<TripDTO> {
+/**
+ * Created by koerfer on 07.03.2015.
+ */
+public class AchievementListAdapter extends ArrayAdapter<AchievementDTO> {
 
     private final Context context;
-    private final TripDTO[] values;
+    private final AchievementDTO[] values;
 
-    public TrackHistoryAdapter(Context context, TripDTO[] values)
+    public AchievementListAdapter(Context context, AchievementDTO[] values)
     {
-        super(context, R.layout.element_trackhistory, values);
+        super(context, R.layout.element_achievementlist, values);
         this.context = context;
         this.values = values;
     }
@@ -24,9 +28,10 @@ public class TrackHistoryAdapter extends ArrayAdapter<TripDTO> {
     public View getView(int position, View convertView, ViewGroup parent)
     {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.element_trackhistory, parent, false);
-        TextView textView = (TextView) view.findViewById(R.id.history_row_label);
-        textView.setText("dummy date");
+        View view = inflater.inflate(R.layout.element_achievementlist, parent, false);
+        TextView textView = (TextView) view.findViewById(R.id.label);
+        textView.setText("dummy achievement");
         return view;
     }
+
 }

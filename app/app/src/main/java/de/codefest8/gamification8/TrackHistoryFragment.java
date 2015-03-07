@@ -1,9 +1,13 @@
 package de.codefest8.gamification8;
 
 import android.app.AlertDialog;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -12,12 +16,13 @@ import de.codefest8.gamification8.models.TripDTO;
 
 
 public class TrackHistoryFragment extends ListFragment {
-    AlertDialog loadingDataDialog;
+
+    private AlertDialog loadingDataDialog;
     TripDTO[] trips;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        trips = new TripDTO[] { };
+        trips = new TripDTO[] { new TripDTO(), new TripDTO() };
         TrackHistoryAdapter adapter = new TrackHistoryAdapter(this.getActivity(), trips);
         setListAdapter(adapter);
 
@@ -33,6 +38,33 @@ public class TrackHistoryFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         ((MainActivity)this.getActivity()).goToFragment(FragmentType.TrackDetail);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        registerForContextMenu(this.getListView());
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = this.getActivity().getMenuInflater();
+        inflater.inflate(R.menu.contextmenu_trackhistory, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.action_share:
+                break;
+            case R.id.action_export:
+                break;
+            case R.id.action_delete:
+                break;
+        }
+        return true;
     }
 
     private void loadData() {
