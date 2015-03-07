@@ -1,4 +1,4 @@
-package de.codefest8.gamification8;
+package de.codefest8.gamification8.fragments;
 
 import android.app.AlertDialog;
 import android.support.annotation.Nullable;
@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import de.codefest8.gamification8.MainActivity;
+import de.codefest8.gamification8.R;
+import de.codefest8.gamification8.listadapters.TrackHistoryAdapter;
 import de.codefest8.gamification8.models.TripDTO;
 
 

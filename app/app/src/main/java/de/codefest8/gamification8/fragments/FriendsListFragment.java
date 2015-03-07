@@ -1,9 +1,8 @@
-package de.codefest8.gamification8;
+package de.codefest8.gamification8.fragments;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -18,14 +17,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import de.codefest8.gamification8.GlobalState;
+import de.codefest8.gamification8.R;
+import de.codefest8.gamification8.UserMessagesHandler;
+import de.codefest8.gamification8.listadapters.FriendsListAdapter;
 import de.codefest8.gamification8.models.UserDTO;
 import de.codefest8.gamification8.network.FriendsResolver;
 import de.codefest8.gamification8.network.ResponseCallback;
 
-public class FriendListFragment extends ListFragment {
+public class FriendsListFragment extends ListFragment {
     private final static String LOG_TAG = "FriendsListFragment";
     AlertDialog loadingDataDialog;
 
@@ -43,7 +43,7 @@ public class FriendListFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_friendlist, container, false);
+        return inflater.inflate(R.layout.fragment_friendslist, container, false);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class FriendListFragment extends ListFragment {
 
     private void loadData() {
         loadingDataDialog.show();
-        FriendsResolver resolver = new FriendsResolver(new FriendsResolverCallback(),GlobalState.getInstance().getUser());
+        FriendsResolver resolver = new FriendsResolver(new FriendsResolverCallback(), GlobalState.getInstance().getUser());
         resolver.doRequestArray();
     }
 }

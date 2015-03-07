@@ -1,4 +1,4 @@
-package de.codefest8.gamification8;
+package de.codefest8.gamification8.fragments;
 
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import de.codefest8.gamification8.R;
 
 
 public class AboutFragment extends Fragment {

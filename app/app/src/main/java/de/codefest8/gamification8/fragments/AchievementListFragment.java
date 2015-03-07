@@ -1,9 +1,8 @@
-package de.codefest8.gamification8;
+package de.codefest8.gamification8.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -11,13 +10,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
+import de.codefest8.gamification8.R;
+import de.codefest8.gamification8.listadapters.AchievementListAdapter;
 import de.codefest8.gamification8.models.AchievementDTO;
-import de.codefest8.gamification8.models.TripDTO;
 
 /**
  * Created by koerfer on 07.03.2015.
