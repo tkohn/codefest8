@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/recent_achievements"
-        android:id="@+id/textView"
+        android:id="@+id/recent_achieves_title"
         android:layout_marginLeft="@dimen/recent_achivs_margin_left"
         android:layout_marginRight="@dimen/recent_achivs_margin_left" />
 
