@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import de.codefest8.gamification8.models.Track;
+
 /**
  * Created by koerfer on 07.03.2015.
  */

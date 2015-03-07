@@ -11,7 +11,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import de.codefest8.gamification8.network.UserRequest;
+import de.codefest8.gamification8.network.DummyResponseCallback;
+import de.codefest8.gamification8.network.UserResolver;
 
 
 public class StartScreen extends ActionBarActivity {
@@ -26,8 +27,8 @@ public class StartScreen extends ActionBarActivity {
 
         initDrawer();
 
-        UserRequest ur = new UserRequest();
-        ur.requestGeneralInfo(2);
+        UserResolver ur = new UserResolver(new DummyResponseCallback(), 3);
+        ur.doRequest();
     }
 
 

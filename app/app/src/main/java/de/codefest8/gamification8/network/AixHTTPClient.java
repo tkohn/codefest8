@@ -8,7 +8,10 @@ import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 
-
+/**
+ * General implementation of the HTTP client.
+ * Not meant to be used directly outside of network package. Use Resolvers instead.
+ */
 public class AixHTTPClient {
     private static final String LOG_TAG = "AixHTTPClient";
     private final static String SERVER_URL = "http://137.226.183.140:8080/aix-cruise/api/v1";
