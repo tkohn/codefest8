@@ -27,8 +27,10 @@
         <eclipselink.version>2.5.0</eclipselink.version>
         <javax.persistence.version>2.1.0</javax.persistence.version>
         <postgresql.version>9.4-1201-jdbc41</postgresql.version>
-        <h2.version>1.4.185</h2.version>
+
         <!-- MISCELLANEOUS -->
+        <dozer.version>5.5.1</dozer.version>
+        <slf4j-simple.version>1.7.10</slf4j-simple.version>
 
         <!-- TEST -->
         <junit.version>4.12</junit.version>
@@ -99,14 +101,21 @@
             <version>${postgresql.version}</version>
         </dependency>
 
+
+        <!-- MISCELLANEOUS -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>${dozer.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-simple.version}</version>
         </dependency>
 
 
-        <!-- MISCELLANEOUS -->
 
         <!-- TEST -->
         <dependency>

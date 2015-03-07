@@ -1,5 +1,7 @@
 package de.codefest8.gamification.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.sql.Timestamp;
 
 /**
@@ -7,6 +9,7 @@ import java.sql.Timestamp;
  */
 public class TripDataDTO {
     private long id;
+    @JsonBackReference
     private TripDTO trip;
     private Timestamp datetime;
     private double GPSSpeedMS;

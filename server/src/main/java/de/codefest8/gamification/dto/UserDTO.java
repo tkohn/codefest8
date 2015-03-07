@@ -1,5 +1,8 @@
 package de.codefest8.gamification.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.List;
 
 /**
@@ -10,12 +13,20 @@ public class UserDTO {
     private long id;
     private String name;
     private String password;
+    @JsonBackReference
     private UserDTO user;
+    @JsonManagedReference
     private List<UserDTO> friends;
+    @JsonManagedReference
     private List<TripDTO> trips;
+    @JsonManagedReference
     private List<AchievementDTO> achievements;
 
     public UserDTO() {
+    }
+
+    public UserDTO(long id) {
+        this.id = id;
     }
 
     public long getId() {
@@ -73,4 +84,5 @@ public class UserDTO {
     public void setAchievements(List<AchievementDTO> achievements) {
         this.achievements = achievements;
     }
+
 }
