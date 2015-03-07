@@ -1,0 +1,39 @@
+ LOAD CSV
+      FROM '/home/vw/Fahrtbuch/torqueTrackLog_Aachen_Hotel-Uni.csv' (gps_time, device_time, long, lat, gps_speed_ms, horizontal_dilution_of_precision, altitude, g_x, g_y, g_z, g_cal, gps_speed_kmh, gps_altitude, g_total, g_z_2, engine_load, 
+      coolant_temp, fuel_pressure, intake_manifold_pressure, engine_rpm, speed_obd_kmh, mass_air_flow_rate, intake_air_temperature, timing_advance, throttle_position, fuel_level, voltage, mpg, turbo_boost,
+      mpg_avg, kpl, kpl_avg, trip_distance, trip_average_mpg, trip_average_kpl, g_x_2, g_y_2, ambient_air_temp, barometric_pressure, l_p_100_km, l_p_100_km_avg)  
+      INTO postgresql:///vwhack?trips (gps_time, device_time, long, lat, gps_speed_ms, gps_speed_kmh, speed_obd_kmh, altitude, g_total, engine_load, engine_rpm, throttle_position, intake_air_temperature,
+									   fuel_level, kpl, kpl_avg, trip_distance)
+      WITH truncate,  
+           skip header = 1,  
+           fields optionally enclosed by '"',  
+           fields escaped by double-quote,  
+           fields terminated by ','  
+ 
+       SET client_encoding to 'latin1',  
+           work_mem to '128MB',  
+           standard_conforming_strings to 'on'  
+ 
+    BEFORE LOAD DO  
+     $$ drop table if exists trips; $$,  
+     $$ create table trips 
+     (
+		gps_time timestamp,
+		device_time timestamp,
+		long double precision,
+		lat double precision,
+		gps_speed_ms double precision,
+		gps_speed_kmh double precision,
+		speed_obd_kmh double precision,
+		altitude double precision,
+		g_total double precision,
+		engine_load double precision,
+		engine_rpm double precision,
+		throttle_position double precision,
+		intake_air_temperature double precision,
+		fuel_level double precision,
+		kpl double precision,
+		kpl_avg double precision,
+		trip_distance double precision
+	);
+   $$; 
