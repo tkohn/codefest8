@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import java.util.GregorianCalendar;
 
+import de.codefest8.gamification8.models.Track;
+
 
 public class HistoryFragment extends ListFragment {
 
