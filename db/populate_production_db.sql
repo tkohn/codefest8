@@ -22,7 +22,8 @@ SELECT to_timestamp(gps_time, 'Dy Mon DD HH:MI:SS    YYYY') as datetime,
 		intake_air_temperature as air_temperature,
 		fuel_level,
 		kpl
-FROM trips_raw;
+FROM trips_raw
+ORDER BY datetime;
 
 SELECT 
 INTO trip_data
