@@ -12,12 +12,12 @@ import de.codefest8.gamification8.models.Track;
 /**
  * Created by koerfer on 07.03.2015.
  */
-public class HistoryElementAdapter extends ArrayAdapter<Track> {
+public class TrackHistoryAdapter extends ArrayAdapter<Track> {
 
     private final Context context;
     private final Track[] values;
 
-    public HistoryElementAdapter(Context context, Track[] values)
+    public TrackHistoryAdapter(Context context, Track[] values)
     {
         super(context, R.layout.row_history, values);
         this.context = context;
