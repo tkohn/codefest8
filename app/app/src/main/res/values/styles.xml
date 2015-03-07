@@ -7,4 +7,9 @@
         <item name="logo">@drawable/logo</item>
         <item name="displayOptions">useLogo|showHome</item>
     </style>
+
+    <style name="Theme.Test.DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+    </style>
 </resources>

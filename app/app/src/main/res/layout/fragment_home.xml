@@ -20,11 +20,20 @@
         android:focusable="true"
         android:id="@+id/start_button" />
 
-    <ListView
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_gravity="center_horizontal" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/recent_achievements"
+        android:id="@+id/textView"
+        android:layout_marginLeft="@dimen/recent_achivs_margin_left"
+        android:layout_marginRight="@dimen/recent_achivs_margin_left" />
+
+    <fragment
+        android:name="de.codefest8.gamification8.HistoryFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/short_achievements"/>
 
 
 </LinearLayout>
