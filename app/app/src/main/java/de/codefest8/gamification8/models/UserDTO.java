@@ -77,7 +77,6 @@ public class UserDTO {
         try {
             user.setId(object.getLong(FIELD_ID));
             user.setName(object.getString(FIELD_NAME));
-            user.setPassword(object.getString(FIELD_PASSWORD));
 
         } catch (JSONException ex) {
             UserMessagesHandler.getInstance().registerError("Error while parsing UserDTO JSON.");

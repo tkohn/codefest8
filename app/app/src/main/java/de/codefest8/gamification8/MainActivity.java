@@ -41,6 +41,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        UserMessagesHandler.getInstance().setApplicationContext(getApplicationContext());
+
         UserDTO user = new UserDTO();
         user.setId(0);
         user.setName("James Bond");
