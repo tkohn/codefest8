@@ -22,8 +22,8 @@ public class FriendsListAdapter extends ArrayAdapter<UserDTO> {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.row_history, parent, false);
-        TextView textView = (TextView) view.findViewById(R.id.label);
+        View view = inflater.inflate(R.layout.row_friends, parent, false);
+        TextView textView = (TextView) view.findViewById(R.id.friend_row_label);
         textView.setText(values[position].getName());
         return view;
     }

@@ -25,7 +25,7 @@ public class TrackHistoryAdapter extends ArrayAdapter<TripDTO> {
     {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.row_history, parent, false);
-        TextView textView = (TextView) view.findViewById(R.id.label);
+        TextView textView = (TextView) view.findViewById(R.id.history_row_label);
         textView.setText("dummy date");
         return view;
     }
