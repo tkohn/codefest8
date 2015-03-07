@@ -30,7 +30,7 @@ public class StartScreen extends ActionBarActivity {
 
         switch(item.getItemId()) {
             case R.id.action_about:
-                this.showAboutActivity(item.getActionView());
+                this.showHistoryActivity(item.getActionView());
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -38,6 +38,11 @@ public class StartScreen extends ActionBarActivity {
 
     public void showAboutActivity(View view) {
         Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
+
+    public void showHistoryActivity(View view) {
+        Intent intent = new Intent(this, HistoryActivity.class);
         startActivity(intent);
     }
 }
