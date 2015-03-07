@@ -11,18 +11,14 @@ import android.widget.ListView;
 import de.codefest8.gamification8.models.TripDTO;
 
 
-
 public class TrackHistoryFragment extends ListFragment {
-public class HistoryFragment extends ListFragment {
     AlertDialog loadingDataDialog;
     TripDTO[] trips;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        TripDTO[] tracks = new TripDTO[] { };
-        TrackHistoryAdapter adapter = new TrackHistoryAdapter(this.getActivity(), tracks);
         trips = new TripDTO[] { };
-        HistoryElementAdapter adapter = new HistoryElementAdapter(this.getActivity(), trips);
+        TrackHistoryAdapter adapter = new TrackHistoryAdapter(this.getActivity(), trips);
         setListAdapter(adapter);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -31,7 +27,6 @@ public class HistoryFragment extends ListFragment {
 
         loadData();
 
-        return inflater.inflate(R.layout.fragment_history, container, false);
         return inflater.inflate(R.layout.fragment_trackhistory, container, false);
     }
 
