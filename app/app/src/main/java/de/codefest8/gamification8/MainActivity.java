@@ -79,7 +79,7 @@ public class MainActivity extends ActionBarActivity {
                 newFragment = new HomeFragment();
                 break;
             case 1:
-                newFragment = new HistoryFragment();
+                newFragment = new TrackHistoryFragment();
                 break;
             case 2:
                 newFragment = new HomeFragment();

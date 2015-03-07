@@ -8,11 +8,13 @@
 
     <string-array name="drawer_elements_name">
         <item>Home</item>
+        <item>Friends</item>
         <item>Previous Trips</item>
         <item>My Achievements</item>
         <item>About</item>
     </string-array>
     <string-array name="drawer_elements_icon">
+        <item>@mipmap/history</item>
         <item>@mipmap/history</item>
         <item>@mipmap/history</item>
         <item>@mipmap/achievements</item>

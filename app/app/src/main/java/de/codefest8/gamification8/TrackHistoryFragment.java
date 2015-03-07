@@ -13,14 +13,14 @@ import java.util.GregorianCalendar;
 import de.codefest8.gamification8.models.Track;
 
 
-public class HistoryFragment extends ListFragment {
+public class TrackHistoryFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Track[] tracks = new Track[] { new Track(new GregorianCalendar(2014, 10, 4)), new Track(new GregorianCalendar(2014, 11, 5)), new Track(new GregorianCalendar(2015, 1, 1))};
         HistoryElementAdapter adapter = new HistoryElementAdapter(this.getActivity(), tracks);
         setListAdapter(adapter);
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        return inflater.inflate(R.layout.fragment_trackhistory, container, false);
     }
 
     @Override
