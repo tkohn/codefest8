@@ -17,10 +17,31 @@
         android:layout_marginRight="@dimen/start_button_margin_top"
         android:layout_marginBottom="@dimen/start_button_margin_top" />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_gravity="center_horizontal" />
+        <Button
+            android:layout_width="@dimen/start_button_width"
+            android:layout_height="@dimen/start_button_height"
+            android:text="@string/start_button"
+            android:id="@+id/start_button"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/start_button_margin_top"
+            android:layout_marginLeft="@dimen/start_button_margin_top"
+            android:layout_marginRight="@dimen/start_button_margin_top"
+            android:layout_marginBottom="@dimen/start_button_margin_top" />
 
-</LinearLayout>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listView"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+    <ListView android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#111"/>
+
+</android.support.v4.widget.DrawerLayout>

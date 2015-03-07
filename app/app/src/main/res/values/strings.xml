@@ -4,6 +4,13 @@
     <string name="action_about">About</string>
     <string name="title_activity_about">AboutActivity</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="start_button">Start</string>
+
+    <string-array name="drawer_options">
+        <item>Drive</item>
+        <item>History</item>
+        <item>Achievements</item>
+        <item>About</item>
+    </string-array>
     <string name="title_activity_history">Previous Cruises</string>
 </resources>
