@@ -1,8 +1,15 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <!--<item name="actionBarStyle">@style/AixActionBarTheme</item>-->
     </style>
 
+    <style name="AixActionBarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="logo">@drawable/logo</item>
+        <item name="displayOptions">useLogo|showHome</item>
+    </style>
+
+    <style name="Theme.Test.DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+    </style>
 </resources>
