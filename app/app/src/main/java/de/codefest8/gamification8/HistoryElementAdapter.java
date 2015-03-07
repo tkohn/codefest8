@@ -7,17 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import de.codefest8.gamification8.models.Track;
+import de.codefest8.gamification8.models.TripDTO;
 
-/**
- * Created by koerfer on 07.03.2015.
- */
-public class HistoryElementAdapter extends ArrayAdapter<Track> {
+public class HistoryElementAdapter extends ArrayAdapter<TripDTO> {
 
     private final Context context;
-    private final Track[] values;
+    private final TripDTO[] values;
 
-    public HistoryElementAdapter(Context context, Track[] values)
+    public HistoryElementAdapter(Context context, TripDTO[] values)
     {
         super(context, R.layout.row_history, values);
         this.context = context;
@@ -29,7 +26,7 @@ public class HistoryElementAdapter extends ArrayAdapter<Track> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.row_history, parent, false);
         TextView textView = (TextView) view.findViewById(R.id.label);
-        textView.setText(values[position].getDateTimeString());
+        textView.setText("dummy date");
         return view;
     }
 }
