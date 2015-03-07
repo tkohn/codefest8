@@ -1,49 +1,26 @@
-package de.codefest8.gamification.domain.model;
+package de.codefest8.gamification.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
  * Created by torsten on 07/03/15.
  */
-@Entity
-@Table
-public class TripData {
-
-    @TableGenerator(name = "TRIP_DATA_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", allocationSize = 1)
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TRIP_DATA_GEN")
+public class TripDataDTO {
     private long id;
-
-    @ManyToOne
-    @JoinColumn(name = "TRIP_ID")
-    @JsonBackReference
-    private Trip trip;
-
+    private TripDTO trip;
     private Timestamp datetime;
-    @Column(name = "GPS_SPEED_MS")
     private double GPSSpeedMS;
-    @Column(name = "GPS_SPEED_KMH")
     private double GPSSpeedKMH;
-    @Column(name = "SPEED_OBD_KMH")
     private double OBDSpeedKMH;
     private double altitude;
-    @Column(name = "ENGINE_LOAD")
     private double engineLoad;
-    @Column(name = "ENGINE_RPM")
     private double engineRPM;
-    @Column(name = "THROTTLE_POSITION")
     private double throttlePosition;
-    @Column(name = "AIR_TEMPERATURE")
     private double airTemperature;
-    @Column(name = "FUEL_LEVEL")
     private double fuelLevel;
-    @Column(name = "KPL")
     private double KMPerLiter;
 
-    public TripData() {
+    public TripDataDTO() {
     }
 
     public long getId() {
@@ -54,11 +31,11 @@ public class TripData {
         this.id = id;
     }
 
-    public Trip getTrip() {
+    public TripDTO getTrip() {
         return trip;
     }
 
-    public void setTrip(Trip trip) {
+    public void setTrip(TripDTO trip) {
         this.trip = trip;
     }
 
@@ -149,5 +126,4 @@ public class TripData {
     public void setKMPerLiter(double KMPerLiter) {
         this.KMPerLiter = KMPerLiter;
     }
-
 }

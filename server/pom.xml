@@ -27,7 +27,7 @@
         <eclipselink.version>2.5.0</eclipselink.version>
         <javax.persistence.version>2.1.0</javax.persistence.version>
         <postgresql.version>9.4-1201-jdbc41</postgresql.version>
-
+        <h2.version>1.4.185</h2.version>
         <!-- MISCELLANEOUS -->
 
         <!-- TEST -->
@@ -97,6 +97,12 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
         </dependency>
 
 

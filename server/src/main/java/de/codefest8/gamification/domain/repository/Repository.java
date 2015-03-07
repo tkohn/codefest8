@@ -1,6 +1,6 @@
 package de.codefest8.gamification.domain.repository;
 
-import de.codefest8.gamification.domain.model.TestModel;
+import de.codefest8.gamification.domain.model.User;
 
 import java.util.List;
 
@@ -9,7 +9,11 @@ import java.util.List;
  */
 public interface Repository {
 
-    TestModel store(TestModel testModel);
-    TestModel findTestModel(TestModel testModel);
-    List<TestModel> findAllTestModels();
+    User store(User user);
+
+    User findUser(User user);
+
+    List<User> findAllUser();
+
+    List<User> findAllFriends(User user);
 }

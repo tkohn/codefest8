@@ -1,8 +1,8 @@
 
 
 Create jar with maven (Profiles: local-dev, server-dev)
-mvn clean install -P local-dev
-mvn clean install -P server-dev
+mvn clean install -P local-dev // use
+mvn clean install -P server-dev // use server db
 
 Copy file from local maschine to server
 scp ~/development/workspace/codefest8/server/target/codeFEST8-gamification-1.0-SNAPSHOT.jar vw@137.226.183.140:~/server

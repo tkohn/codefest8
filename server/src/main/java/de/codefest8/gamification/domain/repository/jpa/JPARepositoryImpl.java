@@ -1,6 +1,6 @@
 package de.codefest8.gamification.domain.repository.jpa;
 
-import de.codefest8.gamification.domain.model.TestModel;
+import de.codefest8.gamification.domain.model.User;
 import de.codefest8.gamification.domain.repository.Repository;
 
 import javax.persistence.EntityManager;
@@ -24,7 +24,7 @@ public class JPARepositoryImpl implements Repository {
     private JPARepositoryImpl() {
         this.factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
     }
-@Override
+/*@Override
     public TestModel store(TestModel testModel) {
         EntityManager manager = factory.createEntityManager();
         manager.getTransaction().begin();
@@ -49,6 +49,34 @@ public class JPARepositoryImpl implements Repository {
         List<TestModel> results = query.getResultList();
         manager.close();
         return results;
+    }*/
+
+    @Override
+    public User store(User user) {
+        EntityManager manager = factory.createEntityManager();
+        manager.getTransaction().begin();
+        User result = manager.merge(user);
+        manager.getTransaction().commit();
+        manager.close();
+        return result;
     }
 
+    @Override
+    public User findUser(User user) {
+        return null;
+    }
+
+    @Override
+    public List<User> findAllUser() {
+        EntityManager manager = factory.createEntityManager();
+        TypedQuery<User> query = manager.createNamedQuery(User.FIND_ALL, User.class);
+        List<User> results = query.getResultList();
+        manager.close();
+        return results;
+    }
+
+    @Override
+    public List<User> findAllFriends(User user) {
+        return null;
+    }
 }

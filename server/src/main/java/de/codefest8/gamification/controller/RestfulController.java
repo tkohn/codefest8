@@ -1,10 +1,15 @@
 package de.codefest8.gamification.controller;
 
-import de.codefest8.gamification.domain.model.TestModel;
+import de.codefest8.gamification.domain.model.Achievement;
+import de.codefest8.gamification.domain.model.Trip;
+import de.codefest8.gamification.domain.model.TripData;
+import de.codefest8.gamification.domain.model.User;
 import de.codefest8.gamification.domain.repository.Repository;
 import de.codefest8.gamification.domain.repository.RepositoryFactory;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -15,10 +20,43 @@ import java.util.List;
 public class RestfulController {
 
     @GET
-    @Path("users/{user_id}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String findUser(@PathParam("user_id") long user_id) {
-        return "Deine ID war: " + user_id;
+    @Path("users/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<User> findAllUser() {
+        Repository repository = RepositoryFactory.getRepository();
+        return repository.findAllUser();
+    }
+
+    @GET
+    @Path("users/test")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String testData() {
+        User user = new User();
+
+        User friend = new User();
+        Achievement achievement = new Achievement();
+        Trip trip = new Trip();
+        TripData tripData = new TripData();
+
+        user.addAchievement(achievement);
+        user.addFriend(friend);
+        user.addTrip(trip);
+
+        trip.addTripData(tripData);
+
+        user.setName("Peter");
+        user.setPassword("none");
+
+        achievement.setName("awesome");
+        achievement.setTrip(trip);
+        achievement.setPoints(1000);
+
+        tripData.setKMPerLiter(3.3);
+
+
+        Repository repository = RepositoryFactory.getRepository();
+        repository.store(user);
+        return "create test data";
     }
 /*
     @GET
