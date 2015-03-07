@@ -7,17 +7,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import de.codefest8.gamification8.models.TripDTO;
 
 
+
+public class TrackHistoryFragment extends ListFragment {
 public class HistoryFragment extends ListFragment {
     AlertDialog loadingDataDialog;
     TripDTO[] trips;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        TripDTO[] tracks = new TripDTO[] { };
+        TrackHistoryAdapter adapter = new TrackHistoryAdapter(this.getActivity(), tracks);
         trips = new TripDTO[] { };
         HistoryElementAdapter adapter = new HistoryElementAdapter(this.getActivity(), trips);
         setListAdapter(adapter);
@@ -29,11 +32,12 @@ public class HistoryFragment extends ListFragment {
         loadData();
 
         return inflater.inflate(R.layout.fragment_history, container, false);
+        return inflater.inflate(R.layout.fragment_trackhistory, container, false);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Toast.makeText(this.getActivity(), "entry " + Integer.toString(position) + " clicked", Toast.LENGTH_SHORT).show();
+        ((MainActivity)this.getActivity()).goToFragment(FragmentType.TrackDetail);
     }
 
     private void loadData() {

@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 import de.codefest8.gamification8.models.TripDTO;
 
-public class HistoryElementAdapter extends ArrayAdapter<TripDTO> {
+/**
+ * Created by koerfer on 07.03.2015.
+ */
+public class TrackHistoryAdapter extends ArrayAdapter<TripDTO> {
 
     private final Context context;
     private final TripDTO[] values;
 
-    public HistoryElementAdapter(Context context, TripDTO[] values)
+    public TrackHistoryAdapter(Context context, TripDTO[] values)
     {
         super(context, R.layout.row_history, values);
         this.context = context;
