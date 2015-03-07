@@ -31,7 +31,6 @@ public class RestfulController {
     @Path("users/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> findAllUser() {
-
         return service.findAllUser();
     }
 
