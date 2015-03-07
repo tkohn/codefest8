@@ -1,7 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="de.codefest8.gamification8.AboutFragment">
-    <item android:id="@+id/action_about" android:title="Add Friend"
-        android:orderInCategory="100" app:showAsAction="never"/>
+    xmlns:tools="http://schemas.android.com/tools">
+    <item android:id="@+id/action_addfriend" android:title="Add Friend" android:icon="@mipmap/user"
+        android:orderInCategory="100" app:showAsAction="ifRoom" />
 </menu>
