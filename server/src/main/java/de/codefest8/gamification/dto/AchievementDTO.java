@@ -1,5 +1,7 @@
 package de.codefest8.gamification.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 /**
  * Created by torsten on 07/03/15.
  */
@@ -7,7 +9,10 @@ public class AchievementDTO {
     private long id;
     private String name;
     private int points;
+    private String description;
+    @JsonBackReference
     private UserDTO user;
+    @JsonBackReference
     private TripDTO trip;
 
     public AchievementDTO() {
@@ -35,6 +40,14 @@ public class AchievementDTO {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public UserDTO getUser() {

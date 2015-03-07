@@ -18,6 +18,7 @@ public class Achievement {
 
     private String name;
     private int points;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
@@ -54,6 +55,14 @@ public class Achievement {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public User getUser() {
