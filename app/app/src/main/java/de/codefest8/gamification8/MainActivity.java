@@ -3,6 +3,7 @@ package de.codefest8.gamification8;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.content.res.TypedArray;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         {
             if (this.getSupportActionBar().getTitle() != menuLabels[0])
             {
-                this.selectItem(0);
+                this.goToFragment(FragmentType.Home);
             }
             else
             {
@@ -66,35 +67,67 @@ public class MainActivity extends ActionBarActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
+
+            switch (position)
+            {
+                default:
+                case 0:
+                    goToFragment(FragmentType.Home);
+                    break;
+                case 1:
+                    goToFragment(FragmentType.FriendList);
+                    break;
+                case 2:
+                    goToFragment(FragmentType.TrackHistory);
+                    break;
+                case 3:
+                    goToFragment(FragmentType.AchievementList);
+                    break;
+                case 4:
+                    goToFragment(FragmentType.About);
+                    break;
+            }
+            drawerLayout.closeDrawer(drawerMenu);
         }
     }
 
-    private void selectItem(int position) {
+    public void goToFragment(FragmentType type)
+    {
+        this.goToFragment(type, Bundle.EMPTY);
+    }
+
+    public void goToFragment(FragmentType type, Bundle bundle)
+    {
         Fragment newFragment;
-        switch (position)
+        switch (type)
         {
             default:
-            case 0:
+            case Home:
                 newFragment = new HomeFragment();
                 break;
-            case 1:
+            case FriendList:
+                newFragment = new FriendListFragment();
+                break;
+            case FriendDetail:
+                newFragment = new FriendDetailFragment();
+                break;
+            case TrackHistory:
                 newFragment = new TrackHistoryFragment();
                 break;
-            case 2:
-                newFragment = new HomeFragment();
+            case TrackDetail:
+                newFragment = new TrackDetailFragment();
                 break;
-            case 3:
+            case AchievementList:
+                newFragment = new AchievementListFragment();
+                break;
+            case About:
                 newFragment = new AboutFragment();
                 break;
         }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, newFragment).commit();
-
-        this.drawerLayout.closeDrawers();
-        this.getSupportActionBar().setTitle(menuLabels[position]);
+        newFragment.setArguments(bundle);
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment).commit();
+        getSupportActionBar().setTitle(type.name());
     }
 
 }
