@@ -8,12 +8,14 @@
 
     <string-array name="drawer_elements_name">
         <item>Home</item>
+        <item>Friends</item>
         <item>Previous Trips</item>
         <item>My Achievements</item>
         <item>About</item>
     </string-array>
     <string-array name="drawer_elements_icon">
         <item>@mipmap/home</item>
+        <item>@mipmap/friends</item>
         <item>@mipmap/history</item>
         <item>@mipmap/achievements</item>
         <item>@mipmap/about</item>
@@ -23,4 +25,5 @@
     <string name="drawer_close">Drawer close</string>
     <string name="drawler_active">Choose section</string>
     <string name="recent_achievements">Recent achievements:</string>
+    <string name="dialog_loading_data">Loading data...</string>
 </resources>

@@ -1,17 +1,11 @@
 package de.codefest8.gamification8.network;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
-
-import org.apache.http.Header;
-import org.json.JSONObject;
-
-import de.codefest8.gamification8.UserMessagesHandler;
-import de.codefest8.gamification8.models.User;
+import de.codefest8.gamification8.models.UserDTO;
 
 public class UserResolver extends AbstractResolver {
     private static final String URL_GENERAL = "/users/";
     private Integer userId;
-    private User user;
+    private UserDTO user;
 
     public UserResolver(ResponseCallback callback, Integer userId) {
         super(callback);
@@ -23,7 +17,7 @@ public class UserResolver extends AbstractResolver {
         return URL_GENERAL+String.valueOf(userId);
     }
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 }

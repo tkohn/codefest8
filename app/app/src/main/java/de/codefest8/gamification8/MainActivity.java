@@ -5,6 +5,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.content.res.TypedArray;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import de.codefest8.gamification8.models.UserDTO;
 
 public class MainActivity extends ActionBarActivity {
     private final String ACTIVITY_NAME = "MainActivity";
@@ -32,6 +34,13 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        UserDTO user = new UserDTO();
+        user.setId(0);
+        user.setName("James Bond");
+        user.setPassword("topsecret");
+        GlobalState.getInstance().setUser(user);
+
         this.setContentView(R.layout.activity_main);
         this.currentTitle = ((String[])getResources().getStringArray(R.array.drawer_elements_name))[0];
         this.initDrawer();
@@ -49,7 +58,7 @@ public class MainActivity extends ActionBarActivity {
         {
             if (this.getSupportActionBar().getTitle() != menuLabels[0])
             {
-                this.selectItem(0);
+                this.goToFragment(FragmentType.Home);
             }
             else
             {
@@ -104,36 +113,67 @@ public class MainActivity extends ActionBarActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
+
+            switch (position)
+            {
+                default:
+                case 0:
+                    goToFragment(FragmentType.Home);
+                    break;
+                case 1:
+                    goToFragment(FragmentType.FriendList);
+                    break;
+                case 2:
+                    goToFragment(FragmentType.TrackHistory);
+                    break;
+                case 3:
+                    goToFragment(FragmentType.AchievementList);
+                    break;
+                case 4:
+                    goToFragment(FragmentType.About);
+                    break;
+            }
+            drawerLayout.closeDrawer(drawerMenu);
         }
     }
 
-    private void selectItem(int position) {
+    public void goToFragment(FragmentType type)
+    {
+        this.goToFragment(type, Bundle.EMPTY);
+    }
+
+    public void goToFragment(FragmentType type, Bundle bundle)
+    {
         Fragment newFragment;
-        switch (position)
+        switch (type)
         {
             default:
-            case 0:
+            case Home:
                 newFragment = new HomeFragment();
                 break;
-            case 1:
-                newFragment = new HistoryFragment();
+            case FriendList:
+                newFragment = new FriendListFragment();
                 break;
-            case 2:
-                newFragment = new HomeFragment();
+            case FriendDetail:
+                newFragment = new FriendDetailFragment();
                 break;
-            case 3:
+            case TrackHistory:
+                newFragment = new TrackHistoryFragment();
+                break;
+            case TrackDetail:
+                newFragment = new TrackDetailFragment();
+                break;
+            case AchievementList:
+                newFragment = new AchievementListFragment();
+                break;
+            case About:
                 newFragment = new AboutFragment();
                 break;
         }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, newFragment).commit();
-
-        this.drawerLayout.closeDrawers();
-        this.currentTitle = menuLabels[position];
-        this.getSupportActionBar().setTitle(this.currentTitle);
+        newFragment.setArguments(bundle);
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment).commit();
+        getSupportActionBar().setTitle(type.name());
     }
 
     @Override
