@@ -38,6 +38,5 @@ public class TrackHistoryFragment extends ListFragment {
     private void loadData() {
         loadingDataDialog.show();
 
-        loadingDataDialog.dismiss();
     }
 }

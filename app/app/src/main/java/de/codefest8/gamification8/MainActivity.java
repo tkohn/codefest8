@@ -16,6 +16,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import de.codefest8.gamification8.models.UserDTO;
+
 public class MainActivity extends ActionBarActivity {
     private final String ACTIVITY_NAME = "MainActivity";
 
@@ -32,6 +34,13 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        UserDTO user = new UserDTO();
+        user.setId(0);
+        user.setName("James Bond");
+        user.setPassword("topsecret");
+        GlobalState.getInstance().setUser(user);
+
         this.setContentView(R.layout.activity_main);
         this.currentTitle = ((String[])getResources().getStringArray(R.array.drawer_elements_name))[0];
         this.initDrawer();

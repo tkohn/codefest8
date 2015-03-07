@@ -1,8 +1,25 @@
 package de.codefest8.gamification8.models;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
+import de.codefest8.gamification8.UserMessagesHandler;
+
 public class UserDTO {
+    private static final String LOG_TAG = "UserDTO";
+
+    private static final String FIELD_ID = "id";
+    private static final String FIELD_NAME = "name";
+    private static final String FIELD_PASSWORD = "password";
+    private static final String FIELD_USER = "user";
+    private static final String FIELD_FRIENDS = "friends";
+    private static final String FIELD_TRIPS = "trips";
+    private static final String FIELD_ACHIEVEMENTS = "achievements";
+
     private long id;
     private String name;
     private String password;
@@ -53,5 +70,20 @@ public class UserDTO {
     }
     public void setAchievements(List<AchievementDTO> achievements) {
         this.achievements = achievements;
+    }
+
+    public static UserDTO fromJson(JSONObject object) {
+        UserDTO user = new UserDTO();
+        try {
+            user.setId(object.getLong(FIELD_ID));
+            user.setName(object.getString(FIELD_NAME));
+            user.setPassword(object.getString(FIELD_PASSWORD));
+
+        } catch (JSONException ex) {
+            UserMessagesHandler.getInstance().registerError("Error while parsing UserDTO JSON.");
+            Log.e(LOG_TAG, ex.toString());
+        }
+
+        return user;
     }
 }
