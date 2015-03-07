@@ -23,4 +23,5 @@
     <string name="drawer_close">Drawer close</string>
     <string name="drawler_active">Choose section</string>
     <string name="recent_achievements">Recent achievements:</string>
+    <string name="dialog_loading_data">Loading data...</string>
 </resources>
