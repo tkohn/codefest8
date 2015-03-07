@@ -6,6 +6,6 @@
     <dimen name="start_button_margin_right">30dp</dimen>
     <dimen name="start_button_margin_bottom">30dp</dimen>
     <dimen name="start_button_margin_left">60dp</dimen>
-    <dimen name="start_button_height">130dp</dimen>
-    <dimen name="start_button_width">130dp</dimen>
+    <dimen name="start_button_height">230dp</dimen>
+    <dimen name="start_button_width">230dp</dimen>
 </resources>
