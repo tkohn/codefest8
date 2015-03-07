@@ -1,12 +1,15 @@
 package de.codefest8.gamification8;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class StartScreen extends ActionBarActivity {
+    private final String ACTIVITY_NAME = "StartScreen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +27,17 @@ public class StartScreen extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_about:
+                this.showAboutActivity(item.getActionView());
+                break;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showAboutActivity(View view) {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
     }
 }
