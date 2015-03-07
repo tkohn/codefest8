@@ -11,16 +11,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import de.codefest8.gamification8.network.UserRequest;
+
 
 public class StartScreen extends ActionBarActivity {
-    private final String ACTIVITY_NAME = "StartScreen";
+    private final static String ACTIVITY_NAME = "StartScreen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
+        UserMessagesHandler.getInstance().setApplicationContext(getApplicationContext());
+
         initDrawer();
+
+        UserRequest ur = new UserRequest();
+        ur.requestGeneralInfo(2);
     }
 
 
