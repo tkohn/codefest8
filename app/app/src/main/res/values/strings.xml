@@ -26,6 +26,17 @@
         <item>@mipmap/achievements</item>
         <item>@mipmap/about</item>
     </string-array>
+    <string-array name="map_data_type">
+        <item>Speed</item>
+        <item>Gas consume</item>
+        <item>Engine RPM</item>
+    </string-array>
+    <string-array name="map_data_type_description">
+        <item>Green is low kmh</item>
+        <item>Green is low consume</item>
+        <item>Green is low RPM</item>
+    </string-array>
+
     <string name="title_activity_history">Previous Cruises</string>
     <string name="drawer_open">Drawer open</string>
     <string name="drawer_close">Drawer close</string>
@@ -38,4 +49,5 @@
     <string name="user_status_driver">Driver</string>
     <string name="tab_achievements">Achievements</string>
     <string name="tab_trips">Trips</string>
+    <string name="choose_map_data">Display data:</string>
 </resources>

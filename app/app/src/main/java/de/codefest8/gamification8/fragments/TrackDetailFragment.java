@@ -1,5 +1,6 @@
 package de.codefest8.gamification8.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.graphics.Color;
 import android.location.Location;
@@ -10,6 +11,12 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 
@@ -29,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -37,6 +45,7 @@ import java.util.TimerTask;
 import static java.lang.Math.*;
 
 import de.codefest8.gamification8.GlobalState;
+import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
 import de.codefest8.gamification8.models.AchievementDTO;
@@ -47,6 +56,7 @@ import de.codefest8.gamification8.network.TripPointsResolver;
 
 public class TrackDetailFragment extends Fragment  {
     private final static String LOG_TAG = "TrackDetailFragment";
+    View view;
     MapView mMapView;
     private GoogleMap googleMap;
     private MarkerOptions marker;
@@ -59,25 +69,74 @@ public class TrackDetailFragment extends Fragment  {
 
     int i = 0;
 
-    public TrackDetailFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // inflat and return the layout
-        View v = inflater.inflate(R.layout.fragment_trackdetail, container,
+
+        view = inflater.inflate(R.layout.fragment_trackdetail, container,
                 false);
+
+        initMapDataSpinner();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
         loadingDataDialog = builder.create();
 
         loadData();
 
-        mMapView = (MapView) v.findViewById(R.id.map);
+        mMapView = (MapView) view.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
 
-        return v;
+        return view;
+    }
+
+    public class MapOptionsSpinnerAdapater extends BaseAdapter implements SpinnerAdapter {
+        private final String[] content;
+        private final String[] descr;
+        private final Activity activity;
+
+        public MapOptionsSpinnerAdapater(String[] content, String[] descr, Activity activity) {
+            super();
+            this.content = content;
+            this.activity = activity;
+            this.descr = descr;
+        }
+
+        @Override
+        public int getCount() {
+            return content.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return content[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final LayoutInflater inflater = activity.getLayoutInflater();
+            final View spinnerEntry = inflater.inflate(R.layout.spinner_textview, null);
+            final TextView firstLine = (TextView) spinnerEntry.findViewById(R.id.text_line1);
+            final TextView secondLine = (TextView) spinnerEntry.findViewById(R.id.text_line2);
+            firstLine.setText(content[position]);
+            secondLine.setText(descr[position]);
+
+            return spinnerEntry;
+        }
+    }
+
+    private void initMapDataSpinner() {
+        Spinner spinner = (Spinner)view.findViewById(R.id.map_data_spinner);
+        final String[] spinnerContent = getResources().getStringArray(R.array.map_data_type);
+        final String[] spinnerDescriptions = getResources().getStringArray(R.array.map_data_type_description);
+
+        final MapOptionsSpinnerAdapater adapter = new MapOptionsSpinnerAdapater(spinnerContent, spinnerDescriptions, getActivity());
+        spinner.setAdapter(adapter);
     }
 
     private class TripPointsResponseCallback implements ResponseCallback {
