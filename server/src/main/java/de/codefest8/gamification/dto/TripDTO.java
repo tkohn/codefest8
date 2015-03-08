@@ -1,5 +1,8 @@
 package de.codefest8.gamification.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.List;
 
 /**
@@ -7,10 +10,16 @@ import java.util.List;
  */
 public class TripDTO {
     private long id;
+    @JsonBackReference
     private UserDTO user;
+    @JsonManagedReference
     private List<TripDataDTO> tripDataList;
 
     public TripDTO() {
+    }
+
+    public TripDTO(long id) {
+        this.id = id;
     }
 
     public long getId() {

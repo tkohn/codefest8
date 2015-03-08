@@ -1,12 +1,13 @@
 package de.codefest8.gamification.domain.repository.jpa;
 
+import de.codefest8.gamification.domain.model.Trip;
+import de.codefest8.gamification.domain.model.TripData;
 import de.codefest8.gamification.domain.model.User;
 import de.codefest8.gamification.domain.repository.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -24,32 +25,8 @@ public class JPARepositoryImpl implements Repository {
     private JPARepositoryImpl() {
         this.factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
     }
-/*@Override
-    public TestModel store(TestModel testModel) {
-        EntityManager manager = factory.createEntityManager();
-        manager.getTransaction().begin();
-        TestModel result = manager.merge(testModel);
-        manager.getTransaction().commit();
-        manager.close();
-        return result;
-    }
-@Override
-    public TestModel findTestModel(TestModel testModel){
-        EntityManager manager = factory.createEntityManager();
-        TypedQuery<TestModel> query = manager.createNamedQuery(TestModel.FIND_BY_ID, TestModel.class);
-        query.setParameter(TestModel.PARAMETER_TEST_MODEL_ID, testModel.getId());
-        TestModel result = query.getSingleResult();
-        manager.close();
-        return result;
-    }
-@Override
-    public List<TestModel> findAllTestModels(){
-        EntityManager manager = factory.createEntityManager();
-        TypedQuery<TestModel> query = manager.createNamedQuery(TestModel.FIND_ALL, TestModel.class);
-        List<TestModel> results = query.getResultList();
-        manager.close();
-        return results;
-    }*/
+
+    // ##### ##### ##### ##### User ##### ##### ##### #####
 
     @Override
     public User store(User user) {
@@ -63,11 +40,16 @@ public class JPARepositoryImpl implements Repository {
 
     @Override
     public User findUser(User user) {
-        return null;
+        EntityManager manager = factory.createEntityManager();
+        TypedQuery<User> query = manager.createNamedQuery(User.FIND_BY_ID, User.class);
+        query.setParameter(User.PARAMETER_USER_ID, user.getId());
+        User result = query.getSingleResult();
+        manager.close();
+        return result;
     }
 
     @Override
-    public List<User> findAllUser() {
+    public List<User> findAllUsers() {
         EntityManager manager = factory.createEntityManager();
         TypedQuery<User> query = manager.createNamedQuery(User.FIND_ALL, User.class);
         List<User> results = query.getResultList();
@@ -78,5 +60,51 @@ public class JPARepositoryImpl implements Repository {
     @Override
     public List<User> findAllFriends(User user) {
         return null;
+    }
+
+
+    // ##### ##### ##### ##### Trip ##### ##### ##### #####
+    @Override
+    public List<Trip> findAllTrips(User user) {
+        EntityManager manager = factory.createEntityManager();
+        TypedQuery<Trip> query = manager.createNamedQuery(Trip.FIND_ALL, Trip.class);
+        query.setParameter(User.PARAMETER_USER_ID, user.getId());
+        List<Trip> results = query.getResultList();
+        manager.close();
+        return results;
+    }
+
+    @Override
+    public Trip findTrip(User user, Trip trip) {
+        EntityManager manager = factory.createEntityManager();
+        TypedQuery<Trip> query = manager.createNamedQuery(Trip.FIND_BY_ID, Trip.class);
+        query.setParameter(Trip.PARAMETER_TRIP_ID, trip.getId());
+        query.setParameter(User.PARAMETER_USER_ID, user.getId());
+        Trip result = query.getSingleResult();
+        manager.close();
+        return result;
+    }
+
+    // ##### ##### ##### ##### Trip ##### ##### ##### #####
+
+    // TODO fix this bullshit
+    @Override
+    public double getRouteLength(Trip trip) {
+        EntityManager manager = factory.createEntityManager();
+        Query query = manager.createNativeQuery("select ST_Length(ST_MakeLine(gps.position)::geography) from (select position from trip_data where trip_id = ? order by datetime asc) as gps;");
+        query.setParameter(1, trip.getId());
+        double result = (double) query.getSingleResult();
+        manager.close();
+        return result;
+    }
+
+    @Override
+    public Timestamp getStartTime(Trip trip) {
+        EntityManager manager = factory.createEntityManager();
+        Query query = manager.createNativeQuery("select datetime from trip_data where trip_id = ? order by datetime  asc limit 1;");
+        query.setParameter(1, trip.getId());
+        Timestamp result = (Timestamp) query.getSingleResult();
+        manager.close();
+        return result;
     }
 }

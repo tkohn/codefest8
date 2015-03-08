@@ -22,6 +22,7 @@ public class User {
     public static final String FIND_BY_ID = "findById";
     public static final String FIND_ALL = "findAll";
     public static final String FIND_ALL_FRIENDS = "findAllFriends";
+    public static final String PARAMETER_USER_ID = "user_id";
 
     @TableGenerator(name = "USER_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", allocationSize = 1)
     @Id

@@ -1,7 +1,10 @@
 package de.codefest8.gamification.domain.repository;
 
+import de.codefest8.gamification.domain.model.Trip;
+import de.codefest8.gamification.domain.model.TripData;
 import de.codefest8.gamification.domain.model.User;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -9,11 +12,24 @@ import java.util.List;
  */
 public interface Repository {
 
+    // ##### ##### ##### ##### User ##### ##### ##### #####
+
     User store(User user);
 
     User findUser(User user);
 
-    List<User> findAllUser();
+    List<User> findAllUsers();
 
     List<User> findAllFriends(User user);
+
+    // ##### ##### ##### ##### Trip ##### ##### ##### #####
+
+    List<Trip> findAllTrips(User user);
+
+    Trip findTrip(User user, Trip trip);
+
+    // ##### ##### ##### ##### TripData ##### ##### ##### #####
+
+    double getRouteLength(Trip trip);
+    Timestamp getStartTime(Trip trip);
 }

@@ -12,7 +12,16 @@ import java.util.List;
  */
 @Entity
 @Table
+@NamedQueries({
+        @NamedQuery(name = Trip.FIND_BY_ID,
+                query = "SELECT e FROM User u, Trip e WHERE u.id = e.user.id AND e.user.id = :user_id AND e.id = :trip_id"),
+        @NamedQuery(name = Trip.FIND_ALL, query = "SELECT e FROM Trip e WHERE e.user.id = :user_id")
+})
 public class Trip {
+
+    public static final java.lang.String FIND_ALL = "findAllTrips";
+    public static final String FIND_BY_ID = "findTripById";
+    public static final String PARAMETER_TRIP_ID = "trip_id";
 
     @TableGenerator(name = "TRIP_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", allocationSize = 1)
     @Id
@@ -55,8 +64,8 @@ public class Trip {
         this.tripDataList = tripDataList;
     }
 
-    public void addTripData(TripData tripData){
-        if(this.tripDataList == null){
+    public void addTripData(TripData tripData) {
+        if (this.tripDataList == null) {
             this.tripDataList = new ArrayList<>();
         }
         tripData.setTrip(this);
