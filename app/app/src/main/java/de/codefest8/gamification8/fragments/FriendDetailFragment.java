@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.codefest8.gamification8.GlobalState;
 import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
@@ -54,19 +56,33 @@ public class FriendDetailFragment extends Fragment {
     }
 
     public void fillInUserData() {
-        ((TextView)view.findViewById(R.id.friend_name_value)).setText(user.getName());
+        GlobalState.getInstance().setFriend(user);
+        ((TextView) view.findViewById(R.id.friend_name_value)).setText(user.getName());
     }
 
     public void fillInTripsData() {
-        TripDTO[] trips = new TripDTO[] { new TripDTO(), new TripDTO() };
+        final TripDTO[] trips = new TripDTO[] { new TripDTO(), new TripDTO() };
         TrackHistoryAdapter adapter = new TrackHistoryAdapter(this.getActivity(), trips);
         ((ListView)view.findViewById(R.id.friend_trips_list)).setAdapter(adapter);
+        ((ListView)view.findViewById(R.id.friend_trips_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                GlobalState.getInstance().setTrip(trips[position]);
+                ((MainActivity)getActivity()).goToFragment(FragmentType.TrackDetail);
+            }
+        });
     }
 
     public void fillInAchievements() {
         AchievementDTO[] achievements = new AchievementDTO[] { new AchievementDTO(), new AchievementDTO() };
         AchievementListAdapter adapter = new AchievementListAdapter(this.getActivity(), achievements);
-        ((ListView)view.findViewById(R.id.friend_trips_list)).setAdapter(adapter);
+        ((ListView)view.findViewById(R.id.friend_achievements_list)).setAdapter(adapter);
+//        ((ListView)view.findViewById(R.id.friend_achievements_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                ((MainActivity)getActivity()).goToFragment(FragmentType.AchievementDetail);
+//            }
+//        });
     }
 
     class UserResolverCallback implements ResponseCallback {
