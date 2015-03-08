@@ -3,11 +3,15 @@ package de.codefest8.gamification8.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,11 +22,13 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.google.android.gms.games.Notifications;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -35,6 +41,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,8 +130,9 @@ public class TrackDetailFragment extends Fragment  {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Sharing my AixCruise trip with you #codeFEST8");
-                sendIntent.setType("text/plain");
-                startActivity(sendIntent);
+                sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + getActivity().getExternalFilesDir(null).getAbsolutePath() + "/dump/mapdump.png"));
+                sendIntent.setType("image/*");
+                startActivity(Intent.createChooser(sendIntent, "Share your AixCruise"));
                 break;
             case R.id.action_save_raw:
                 // todo
@@ -212,29 +221,6 @@ public class TrackDetailFragment extends Fragment  {
         resolver.doRequestArray();
     }
 
-    private void animateTo(LatLng currentPosition, double zoom, double bearing, double tilt, final int milliseconds) {
-
-        if (googleMap==null) return;
-        //googleMap.setMapType(paramMapMode);
-        //mCurrentPosition=new LatLng(lat,lon);
-
-        // animate camera jumps too much
-        // so we set the camera instantly to the next point
-
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(currentPosition,(float)zoom, (float)tilt, (float)bearing)));
-
-        // give Android a break so it can load tiles. If I start the animation
-        // without pause, no tile loading is done
-
-        mMapView.postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                // keeping numbers small you get a nice scrolling effect
-                googleMap.animateCamera(CameraUpdateFactory.scrollBy(250-(float)Math.random()*500-250, 250-(float)Math.random()*500),milliseconds,null);
-
-            }},500);
-    }
-
     private void startMap() {
         mMapView.onResume();// needed to get the map to display immediately
 
@@ -264,7 +250,7 @@ public class TrackDetailFragment extends Fragment  {
         marker = new MarkerOptions().position(points.get(points.size()-1)).title("Trip End");
         // Changing marker icon
         marker.icon(BitmapDescriptorFactory
-                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         // adding marker
         googleMap.addMarker(marker);
 
@@ -297,55 +283,95 @@ public class TrackDetailFragment extends Fragment  {
             googleMap.addPolyline(multiPoint);
         }
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(points.get(0)).zoom(14).build();
-
-
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 100, new GoogleMap.CancelableCallback() {
+        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
-            public void onFinish() {
-                final Timer t = new Timer("updateTimer");
-                t.scheduleAtFixedRate(new TimerTask() {
+            public void onMapLoaded() {
+                googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
-                    public void run() {
-                        if(getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    i++;
-
-                                    if (i < points.size() - 1) {
-                                        LatLng cur = points.get(i);
-                                        LatLng nxt = points.get(i + 1);
-                                        Float heading = (float) computeHeading(cur, nxt);
-                                        CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
-                                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
-                                        if (oldMarker != null) {
-                                            oldMarker.remove();
-                                        }
-
-                                        MarkerOptions newMarker = new MarkerOptions()
-                                                .position(cur)
-                                                .title("Current Position")
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
-                                                .anchor(0.5f, 3.0f / 5.0f)
-                                                .rotation(1.0f / heading);
-                                        oldMarker = googleMap.addMarker(newMarker);
-                                    } else {
-                                        t.cancel();
-                                    }
-                                }
-                            });
+                    public void onSnapshotReady(Bitmap bitmap) {
+                        try
+                        {
+                            File path = new File(getActivity().getExternalFilesDir(null).getAbsolutePath() + "/dump");
+                            Log.i("AixCruise", path.getAbsolutePath());
+                            if(!path.exists()) path.mkdirs();
+                            File file = new File(path, "mapdump.png");
+                            FileOutputStream stream = new FileOutputStream(file, false);
+                            Log.i("AixCruise", file.getAbsolutePath());
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            stream.flush();
+                            stream.close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.e("AixCruise", ex.getMessage());
                         }
                     }
-                }, 1000, 200);
+                });
+            }
+        });
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng ll : points)
+        {
+            builder.include(ll);
+        }
+        CameraUpdate initialUpdate = CameraUpdateFactory.newLatLngBounds(builder.build(), 20);
+
+        googleMap.moveCamera(initialUpdate);
+
+        /*
+
+        googleMap.animateCamera(initialUpdate, 1000, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
+                    @Override
+                    public void onSnapshotReady(Bitmap bitmap) {
+
+                        final Timer t = new Timer("updateTimer");
+                        t.scheduleAtFixedRate(new TimerTask() {
+                            @Override
+                            public void run() {
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            i++;
+
+                                            if (i < points.size() - 1) {
+                                                LatLng cur = points.get(i);
+                                                LatLng nxt = points.get(i + 1);
+                                                Float heading = (float) computeHeading(cur, nxt);
+                                                CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
+                                                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 200, null);
+                                                if (oldMarker != null) {
+                                                    oldMarker.remove();
+                                                }
+
+                                                MarkerOptions newMarker = new MarkerOptions()
+                                                        .position(cur)
+                                                        .title("Current Position")
+                                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
+                                                        .anchor(0.5f, 3.0f / 5.0f)
+                                                        .rotation(1.0f / heading);
+                                                oldMarker = googleMap.addMarker(newMarker);
+                                            } else {
+                                                t.cancel();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }, 100, 200);
+                    }
+                });
             }
 
             @Override
             public void onCancel() {
 
             }
-        });
+        });*/
     }
 
     /**
