@@ -37,8 +37,6 @@ public class MainActivity extends ActionBarActivity {
 
     private Bundle exchangeBundle;
 
-    private String currentTitle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +50,6 @@ public class MainActivity extends ActionBarActivity {
         GlobalState.getInstance().setUser(user);
 
         this.setContentView(R.layout.activity_main);
-        this.currentTitle = ((String[])getResources().getStringArray(R.array.drawer_elements_name))[0];
         this.initDrawer();
         Fragment firstFragment = new HomeFragment();
         this.getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
@@ -109,7 +106,6 @@ public class MainActivity extends ActionBarActivity {
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(currentTitle);
             }
 
             /** Called when a drawer has settled in a completely open state. */
