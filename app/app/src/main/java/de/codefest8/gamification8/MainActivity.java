@@ -12,6 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.codefest8.gamification8.fragments.AboutFragment;
 import de.codefest8.gamification8.fragments.AchievementListFragment;
@@ -37,6 +41,9 @@ public class MainActivity extends ActionBarActivity {
 
     private Bundle exchangeBundle;
 
+    private boolean closeMode = false;
+    private FragmentType currentType = FragmentType.Home;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +62,8 @@ public class MainActivity extends ActionBarActivity {
         this.getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
     }
 
+
+
     @Override
     public void onBackPressed() {
         if (this.drawerLayout.isDrawerOpen(drawerMenu))
@@ -63,13 +72,43 @@ public class MainActivity extends ActionBarActivity {
         }
         else
         {
-            if (this.getSupportActionBar().getTitle() != menuLabels[0])
-            {
-                this.goToFragment(FragmentType.Home);
-            }
-            else
-            {
-                super.onBackPressed();
+            switch (this.currentType) {
+                case Home:
+                    if (!closeMode)
+                    {
+                        closeMode = true;
+                        Toast.makeText(this, "Click 'back' again to close", Toast.LENGTH_SHORT).show();
+                        Timer t = new Timer("close timer");
+                        t.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        closeMode = false;
+                                    }
+                                });
+                            }
+                        }, 2000);
+                    }
+                    else
+                    {
+                        this.finish();
+                    }
+                    break;
+                case FriendList:
+                case AchievementList:
+                case TrackHistory:
+                case About:
+                default:
+                    goToFragment(FragmentType.Home);
+                    break;
+                case FriendDetail:
+                    goToFragment(FragmentType.FriendList);
+                    break;
+                case TrackDetail:
+                    goToFragment(FragmentType.TrackHistory);
+                    break;
             }
         }
     }
@@ -83,7 +122,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initDrawer() {
-        menuLabels = getResources().getStringArray(R.array.drawer_elements_name);
+        menuLabels = getResources().getStringArray(R.array.drawer_elements_titles);
         menuIcons = getResources().obtainTypedArray(R.array.drawer_elements_icon);
         menuEntries = new DrawerElement[menuLabels.length];
         for (int i = 0; i < menuLabels.length; i++)
@@ -106,6 +145,7 @@ public class MainActivity extends ActionBarActivity {
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(FragmentType.getFragmentTitle(getBaseContext(), currentType));
             }
 
             /** Called when a drawer has settled in a completely open state. */
@@ -158,6 +198,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void goToFragment(FragmentType type, Bundle bundle)
     {
+        this.currentType = type;
         Fragment newFragment;
         switch (type)
         {
@@ -187,7 +228,7 @@ public class MainActivity extends ActionBarActivity {
         newFragment.setArguments(bundle);
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, newFragment).commit();
-        getSupportActionBar().setTitle(type.name());
+        getSupportActionBar().setTitle(FragmentType.getFragmentTitle(this, currentType));
     }
 
     @Override
