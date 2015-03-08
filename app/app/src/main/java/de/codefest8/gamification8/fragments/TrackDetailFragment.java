@@ -142,7 +142,7 @@ public class TrackDetailFragment extends Fragment  {
         ((TextView)view.findViewById(R.id.trip_time_value)).setText(trip.getStartDateTimeString());
 
         Random random = new Random();
-        int grade = random.nextInt(4);
+        int grade = random.nextInt(5);
         int color;
         switch(grade) {
             case 0:
