@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -50,6 +51,8 @@ public class TrackDetailFragment extends Fragment  {
     private GoogleMap googleMap;
     private MarkerOptions marker;
     private List<LatLng> points;
+    private List<Map<String, Double>> properties;
+
     private AlertDialog loadingDataDialog;
 
     Marker oldMarker = null;
@@ -89,7 +92,9 @@ public class TrackDetailFragment extends Fragment  {
             try {
                 for (int i = 0; i < response.length(); i++) {
                     JSONArray arr = response.getJSONArray(i);
-                    points.add(new LatLng(arr.getDouble(0), arr.getDouble(1)));
+                    points.add(new LatLng(arr.getDouble(1), arr.getDouble(0)));
+                    //Map
+                    //properties.add();
                 }
             } catch (JSONException ex) {
                 UserMessagesHandler.getInstance().registerError("Error while parsing achievements list response.");
@@ -146,6 +151,11 @@ public class TrackDetailFragment extends Fragment  {
 
         googleMap = mMapView.getMap();
 
+        if(points.isEmpty())
+        {
+            Log.e("FATAL ERROR", "NO POINTS FOUND");
+            return;
+        }
 
         // create marker
         marker = new MarkerOptions().position(points.get(0)).title("Trip Start");
@@ -183,7 +193,7 @@ public class TrackDetailFragment extends Fragment  {
         }
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(50.77738953, 6.0506326)).zoom(14).build();
+                .target(points.get(0)).zoom(14).build();
 
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 100, new GoogleMap.CancelableCallback() {
