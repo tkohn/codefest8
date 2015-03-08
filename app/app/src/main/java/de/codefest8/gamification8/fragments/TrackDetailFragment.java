@@ -95,7 +95,6 @@ public class TrackDetailFragment extends Fragment  {
         trip = GlobalState.getInstance().getTrip();
 
         initValues();
-        initMapDataSpinner();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
@@ -186,6 +185,17 @@ public class TrackDetailFragment extends Fragment  {
         final MapOptionsSpinnerAdapater adapter = new MapOptionsSpinnerAdapater(spinnerContent, spinnerDescriptions, getActivity());
         spinner.setAdapter(adapter);
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                createMarkersAndRoute(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private class TripPointsResponseCallback implements ResponseCallback {
@@ -226,6 +236,7 @@ public class TrackDetailFragment extends Fragment  {
                     }
 
                     properties.add(tempMap);
+                    initMapDataSpinner();
                 }
 
             } catch (JSONException ex) {
@@ -263,13 +274,14 @@ public class TrackDetailFragment extends Fragment  {
         // give Android a break so it can load tiles. If I start the animation
         // without pause, no tile loading is done
 
-        mMapView.postDelayed(new Runnable(){
+        mMapView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // keeping numbers small you get a nice scrolling effect
-                googleMap.animateCamera(CameraUpdateFactory.scrollBy(250-(float)Math.random()*500-250, 250-(float)Math.random()*500),milliseconds,null);
+                googleMap.animateCamera(CameraUpdateFactory.scrollBy(250 - (float) Math.random() * 500 - 250, 250 - (float) Math.random() * 500), milliseconds, null);
 
-            }},500);
+            }
+        }, 500);
     }
 
     private void createMarkersAndRoute(int activeProperty)
