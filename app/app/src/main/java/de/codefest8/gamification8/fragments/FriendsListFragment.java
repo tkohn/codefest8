@@ -35,8 +35,6 @@ public class FriendsListFragment extends ListFragment {
 
     private final static String LOG_TAG = "FriendsListFragment";
 
-    UserDTO[] users = new UserDTO[0];
-
     AlertDialog loadingDataDialog;
     UserDTO[] users;
 
