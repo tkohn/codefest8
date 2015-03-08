@@ -8,9 +8,6 @@ import android.view.ViewGroup;
 
 import de.codefest8.gamification8.R;
 
-/**
- * Created by koerfer on 07.03.2015.
- */
 public class FriendDetailFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

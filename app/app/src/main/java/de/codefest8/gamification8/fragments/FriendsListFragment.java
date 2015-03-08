@@ -12,12 +12,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.codefest8.gamification8.GlobalState;
+import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
 import de.codefest8.gamification8.listadapters.FriendsListAdapter;
@@ -44,6 +46,11 @@ public class FriendsListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_friendslist, container, false);
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        ((MainActivity)this.getActivity()).goToFragment(FragmentType.FriendDetail);
     }
 
     @Override

@@ -26,4 +26,9 @@
     <string name="drawler_active">Choose section</string>
     <string name="recent_achievements">Recent achievements:</string>
     <string name="dialog_loading_data">Loading data...</string>
+    <string name="user_name">Name:</string>
+    <string name="user_status">Status:</string>
+    <string name="user_status_driver">Driver</string>
+    <string name="tab_achievements">Achievements</string>
+    <string name="tab_trips">Trips</string>
 </resources>
