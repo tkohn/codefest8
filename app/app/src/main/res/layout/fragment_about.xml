@@ -58,5 +58,4 @@
         android:layout_marginLeft="@dimen/user_detail_text_margin"
         android:layout_marginRight="@dimen/user_detail_text_margin" />
 
-
 </RelativeLayout>
