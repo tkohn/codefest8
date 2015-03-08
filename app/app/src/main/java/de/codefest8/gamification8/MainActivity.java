@@ -35,6 +35,8 @@ public class MainActivity extends ActionBarActivity {
     private TypedArray menuIcons;
     private DrawerElement[] menuEntries;
 
+    private Bundle exchangeBundle;
+
     private String currentTitle;
 
     @Override
@@ -73,6 +75,14 @@ public class MainActivity extends ActionBarActivity {
                 super.onBackPressed();
             }
         }
+    }
+
+    public void setExchangeBundle(Bundle bundle) {
+        exchangeBundle = bundle;
+    }
+
+    public Bundle getExchangeBundle() {
+        return exchangeBundle;
     }
 
     private void initDrawer() {

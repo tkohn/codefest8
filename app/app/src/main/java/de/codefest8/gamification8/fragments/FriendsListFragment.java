@@ -30,6 +30,7 @@ import de.codefest8.gamification8.network.ResponseCallback;
 public class FriendsListFragment extends ListFragment {
     private final static String LOG_TAG = "FriendsListFragment";
     AlertDialog loadingDataDialog;
+    UserDTO[] users;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,9 @@ public class FriendsListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(FriendDetailFragment.BUNDLE_KEY_USER_ID, users[position].getId());
+        ((MainActivity)this.getActivity()).setExchangeBundle(bundle);
         ((MainActivity)this.getActivity()).goToFragment(FragmentType.FriendDetail);
     }
 
@@ -93,7 +97,7 @@ public class FriendsListFragment extends ListFragment {
         @Override
         public void successArray(JSONArray response) {
             loadingDataDialog.dismiss();
-            UserDTO[] users = new UserDTO[response.length()];
+            users = new UserDTO[response.length()];
             try {
                 for (int i = 0; i < response.length(); i++) {
                     JSONObject object = response.getJSONObject(i);
