@@ -1,16 +1,23 @@
 package de.codefest8.gamification8.fragments;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
+import com.google.android.gms.games.Notifications;
 import com.google.android.gms.maps.GoogleMap;
 
 import com.google.android.gms.maps.MapsInitializer;
@@ -37,19 +44,23 @@ import java.util.TimerTask;
 import static java.lang.Math.*;
 
 import de.codefest8.gamification8.GlobalState;
+import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
-import de.codefest8.gamification8.models.AchievementDTO;
-import de.codefest8.gamification8.network.AchievementsResolver;
+import de.codefest8.gamification8.models.TripDTO;
 import de.codefest8.gamification8.network.ResponseCallback;
 import de.codefest8.gamification8.network.TripPointsResolver;
 
 
 public class TrackDetailFragment extends Fragment  {
     private final static String LOG_TAG = "TrackDetailFragment";
+
+    TripDTO trip;
+
     MapView mMapView;
     private GoogleMap googleMap;
     private MarkerOptions marker;
+
     private List<LatLng> points;
     private List<Map<String, Double>> properties;
 
@@ -59,18 +70,18 @@ public class TrackDetailFragment extends Fragment  {
 
     int i = 0;
 
-    public TrackDetailFragment() {
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // inflat and return the layout
-        View v = inflater.inflate(R.layout.fragment_trackdetail, container,
-                false);
+        View v = inflater.inflate(R.layout.fragment_trackdetail, container, false);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
         loadingDataDialog = builder.create();
+
+
+        this.trip = GlobalState.getInstance().getTrip();
+
+        setHasOptionsMenu(true);
 
         loadData();
 
@@ -78,6 +89,53 @@ public class TrackDetailFragment extends Fragment  {
         mMapView.onCreate(savedInstanceState);
 
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_track, menu);
+        menu.findItem(R.id.action_save_raw).setVisible(true);
+        menu.findItem(R.id.action_share).setVisible(true);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId())
+        {
+            case R.id.action_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Sharing my AixCruise trip with you #codeFEST8");
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+                break;
+            case R.id.action_save_raw:
+                // todo
+                break;
+            case R.id.action_delete:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Warning");
+                builder.setMessage("Do you want to delete the trip with id '" + trip.getId() + "'?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getActivity(), "Trip with id '" + trip.getId() + "' deleted!", Toast.LENGTH_SHORT).show();
+                        ((MainActivity)getActivity()).goToFragment(FragmentType.TrackHistory);
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.create().show();
+                break;
+        }
+        return true;
     }
 
     private class TripPointsResponseCallback implements ResponseCallback {

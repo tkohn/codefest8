@@ -1,15 +1,20 @@
 package de.codefest8.gamification8.fragments;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +46,7 @@ public class FriendDetailFragment extends Fragment {
     UserDTO user;
     View view;
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle exchangeBundle = ((MainActivity)this.getActivity()).getExchangeBundle();
         userId = exchangeBundle.getLong(BUNDLE_KEY_USER_ID);
@@ -49,10 +55,47 @@ public class FriendDetailFragment extends Fragment {
         builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
         loadingDataDialog = builder.create();
 
+        setHasOptionsMenu(true);
+
         loadData();
 
         view = inflater.inflate(R.layout.fragment_frienddetail, container, false);
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_friend, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch(item.getItemId())
+        {
+            case R.id.action_unfriend:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Warning");
+                builder.setMessage("Do you want to remove " + user.getName() + " from your friend list?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getActivity(), "You removed " + user.getName() + " from your friend list!", Toast.LENGTH_SHORT).show();
+                        ((MainActivity)getActivity()).goToFragment(FragmentType.FriendList);
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.create().show();
+                break;
+        }
+        return true;
     }
 
     public void fillInUserData() {
