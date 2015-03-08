@@ -404,6 +404,8 @@ public class TrackDetailFragment extends Fragment  {
         }
     }
 
+    private int animation_counter = 0;
+
     private void startMap() {
         mMapView.onResume();// needed to get the map to display immediately
 
@@ -483,6 +485,7 @@ public class TrackDetailFragment extends Fragment  {
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                             stream.flush();
                             stream.close();
+                            Toast.makeText(getActivity(), "Snapshot saved", Toast.LENGTH_SHORT).show();
                         }
                         catch (Exception ex)
                         {
@@ -502,52 +505,124 @@ public class TrackDetailFragment extends Fragment  {
 
         googleMap.moveCamera(initialUpdate);
 
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 100, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                final Timer t = new Timer("updateTimer");
-                t.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    i++;
+        googleMap.setOnMapLongClickListener(longclicklistener);
 
-                                    if (i < points.size() - 1) {
-                                        LatLng cur = points.get(i);
-                                        LatLng nxt = points.get(i + 1);
-                                        Float heading = (float) computeHeading(cur, nxt);
-                                        CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
-                                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
-                                        if (oldMarker != null) {
-                                            oldMarker.remove();
-                                        }
-
-                                        MarkerOptions newMarker = new MarkerOptions()
-                                                .position(cur)
-                                                .title("Current Position")
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
-                                                .anchor(0.5f, 3.0f / 5.0f)
-                                                .rotation(1.0f / heading);
-                                        oldMarker = googleMap.addMarker(newMarker);
-                                    } else {
-                                        t.cancel();
-                                    }
-                                }
-                            });
-                        }
-                    }
-                }, 1000, 200);
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-        });
+//        googleMap.animateCamera(initialUpdate, 100, new GoogleMap.CancelableCallback() {
+//            @Override
+//            public void onFinish() {
+//                final Timer t = new Timer("updateTimer");
+//                t.scheduleAtFixedRate(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        if(getActivity() != null) {
+//                            getActivity().runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    i++;
+//
+//                                    if (i < points.size() - 1) {
+//                                        LatLng cur = points.get(i);
+//                                        LatLng nxt = points.get(i + 1);
+//                                        Float heading = (float) computeHeading(cur, nxt);
+//                                        CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
+//                                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+//                                        if (oldMarker != null) {
+//                                            oldMarker.remove();
+//                                        }
+//
+//                                        MarkerOptions newMarker = new MarkerOptions()
+//                                                .position(cur)
+//                                                .title("Current Position")
+//                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
+//                                                .anchor(0.5f, 3.0f / 5.0f)
+//                                                .rotation(1.0f / heading);
+//                                        oldMarker = googleMap.addMarker(newMarker);
+//                                    } else {
+//                                        t.cancel();
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    }
+//                }, 1000, 200);
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//
+//            }
+//        });
     }
+
+    private GoogleMap.OnMapLongClickListener longclicklistener = new GoogleMap.OnMapLongClickListener() {
+        @Override
+        public void onMapLongClick(LatLng latLng) {
+            i = 0;
+            LatLng cur = points.get(i);
+            LatLng nxt = points.get(i + 1);
+            Float heading = (float) computeHeading(cur, nxt);
+            CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
+            if (oldMarker != null) {
+                oldMarker.remove();
+            }
+            MarkerOptions newMarker = new MarkerOptions()
+                    .position(cur)
+                    .title("Current Position")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
+                    .anchor(0.5f, 3.0f / 5.0f)
+                    .rotation(1.0f / heading);
+            oldMarker = googleMap.addMarker(newMarker);
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 200, new MyCallback());
+        }
+    };
+
+    private class MyCallback implements GoogleMap.CancelableCallback {
+        @Override
+        public void onFinish() {
+            i++;
+            if (i < points.size() - 1) {
+                LatLng cur = points.get(i);
+                LatLng nxt = points.get(i + 1);
+                Float heading = (float) computeHeading(cur, nxt);
+                CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
+                if (oldMarker != null) {
+                    oldMarker.remove();
+                }
+                MarkerOptions newMarker = new MarkerOptions()
+                        .position(cur)
+                        .title("Current Position")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
+                        .anchor(0.5f, 3.0f / 5.0f)
+                        .rotation(1.0f / heading);
+                oldMarker = googleMap.addMarker(newMarker);
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 200, new MyCallback());
+            }
+            else
+            {
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (LatLng ll : points)
+                {
+                    builder.include(ll);
+                }
+                CameraUpdate initialUpdate = CameraUpdateFactory.newLatLngBounds(builder.build(), 20);
+
+                googleMap.moveCamera(initialUpdate);
+                googleMap.setOnMapLongClickListener(longclicklistener);
+            }
+        }
+        @Override
+        public void onCancel() {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (LatLng ll : points)
+            {
+                builder.include(ll);
+            }
+            CameraUpdate initialUpdate = CameraUpdateFactory.newLatLngBounds(builder.build(), 20);
+
+            googleMap.moveCamera(initialUpdate);
+            googleMap.setOnMapLongClickListener(longclicklistener);
+        }
+    };
 
     /**
      * Returns the heading from one LatLng to another LatLng. Headings are
