@@ -34,6 +34,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,8 +49,10 @@ import static java.lang.Math.*;
 import de.codefest8.gamification8.GlobalState;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
+import de.codefest8.gamification8.models.Fuel;
 import de.codefest8.gamification8.models.TripDTO;
 import de.codefest8.gamification8.network.ResponseCallback;
+import de.codefest8.gamification8.network.TripFuelResolver;
 import de.codefest8.gamification8.network.TripPointsResolver;
 
 
@@ -65,6 +69,7 @@ public class TrackDetailFragment extends Fragment  {
     private TripDTO trip;
     private TextView mapOverlayText;
     int activeProperty;
+    private Fuel fuel;
 
     private AlertDialog loadingDataDialog;
 
@@ -235,21 +240,51 @@ public class TrackDetailFragment extends Fragment  {
                     }
 
                     properties.add(tempMap);
-                    initMapDataSpinner();
                 }
 
             } catch (JSONException ex) {
                 UserMessagesHandler.getInstance().registerError("Error while parsing achievements list response.");
                 Log.e(LOG_TAG, ex.toString());
             }
-            loadingDataDialog.dismiss();
-            startMap();
+            TripFuelResolver resolver = new TripFuelResolver(new TripFuelResponseCallback(), trip);
+            resolver.doRequestSingle();
         }
 
         @Override
         public void fail(int code, String message) {
             loadingDataDialog.dismiss();
             UserMessagesHandler.getInstance().registerError("Could not load points array.");
+        }
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    class TripFuelResponseCallback implements ResponseCallback {
+
+        @Override
+        public void success(JSONObject response) {
+            loadingDataDialog.dismiss();
+            fuel = Fuel.fromJSON(response);
+            ((TextView)view.findViewById(R.id.trip_fuel_value)).setText(String.valueOf(round(fuel.getFuelEconomy(), 2))+" l");
+            startMap();
+            initMapDataSpinner();
+        }
+
+        @Override
+        public void successArray(JSONArray response) {
+
+        }
+
+        @Override
+        public void fail(int code, String message) {
+            loadingDataDialog.dismiss();
+            UserMessagesHandler.getInstance().registerError("Could not load trip fuel value.");
         }
     }
 
@@ -321,7 +356,7 @@ public class TrackDetailFragment extends Fragment  {
             hsv[1] = 1.0f;
             hsv[2] = 0.9f;
             int color = new Color().HSVToColor(hsv);
-            Log.i("Color", String.valueOf(color));
+//            Log.i("Color", String.valueOf(color));
 
             PolylineOptions multiPoint = new PolylineOptions().color(color);
             int i = c > 0 ? -1 : 0;
@@ -388,7 +423,7 @@ public class TrackDetailFragment extends Fragment  {
                                                 .rotation(1.0f / heading);
                                         oldMarker = googleMap.addMarker(newMarker);
 
-                                        mapOverlayText.setText(String.valueOf((int)Math.floor(properties.get(i).get(propertyNames.get(activeProperty)))));
+                                        mapOverlayText.setText(String.valueOf(round(properties.get(i).get(propertyNames.get(activeProperty)), 2)));
                                     } else {
                                         t.cancel();
                                     }

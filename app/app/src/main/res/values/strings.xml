@@ -73,4 +73,5 @@
     <string name="about_credits_4">Kevin Leonardic</string>
     <string name="about_footer">codeFEST8</string>
     <string name="about_header">AixCruise</string>
+    <string name="trip_fuel_economy">Fuel consumed:</string>
 </resources>
