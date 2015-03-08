@@ -63,6 +63,7 @@ import java.util.TimerTask;
 import static java.lang.Math.*;
 
 import de.codefest8.gamification8.GlobalState;
+import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
 import de.codefest8.gamification8.models.Fuel;
@@ -497,27 +498,9 @@ public class TrackDetailFragment extends Fragment  {
 
             PolylineOptions multiPoint = new PolylineOptions().color(color);
             int i = c > 0 ? -1 : 0;
-            for(; i+c < points.size(); i++)
-            {
+            for(; i+c < points.size(); i++) {
                 int id = c + i;
                 multiPoint.add(points.get(id));
-                                        MarkerOptions newMarker = new MarkerOptions()
-                                                .position(cur)
-                                                .title("Current Position")
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
-                                                .anchor(0.5f, 3.0f / 5.0f)
-                                                .rotation(1.0f / heading);
-                                        oldMarker = googleMap.addMarker(newMarker);
-
-                                        mapOverlayText.setText(String.valueOf(round(properties.get(i).get(propertyNames.get(activeProperty)), 2)));
-                                    } else {
-                                        t.cancel();
-                                    }
-                                }
-                            });
-                        }
-                    }
-                }, 1000, 200);
             }
             googleMap.addPolyline(multiPoint);
         }
@@ -560,52 +543,6 @@ public class TrackDetailFragment extends Fragment  {
         googleMap.moveCamera(initialUpdate);
 
         googleMap.setOnMapLongClickListener(longclicklistener);
-
-//        googleMap.animateCamera(initialUpdate, 100, new GoogleMap.CancelableCallback() {
-//            @Override
-//            public void onFinish() {
-//                final Timer t = new Timer("updateTimer");
-//                t.scheduleAtFixedRate(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        if(getActivity() != null) {
-//                            getActivity().runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    i++;
-//
-//                                    if (i < points.size() - 1) {
-//                                        LatLng cur = points.get(i);
-//                                        LatLng nxt = points.get(i + 1);
-//                                        Float heading = (float) computeHeading(cur, nxt);
-//                                        CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
-//                                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
-//                                        if (oldMarker != null) {
-//                                            oldMarker.remove();
-//                                        }
-//
-//                                        MarkerOptions newMarker = new MarkerOptions()
-//                                                .position(cur)
-//                                                .title("Current Position")
-//                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
-//                                                .anchor(0.5f, 3.0f / 5.0f)
-//                                                .rotation(1.0f / heading);
-//                                        oldMarker = googleMap.addMarker(newMarker);
-//                                    } else {
-//                                        t.cancel();
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    }
-//                }, 1000, 200);
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//
-//            }
-//        });
     }
 
     private GoogleMap.OnMapLongClickListener longclicklistener = new GoogleMap.OnMapLongClickListener() {
@@ -649,6 +586,7 @@ public class TrackDetailFragment extends Fragment  {
                         .anchor(0.5f, 3.0f / 5.0f)
                         .rotation(1.0f / heading);
                 oldMarker = googleMap.addMarker(newMarker);
+                mapOverlayText.setText(String.valueOf(round(properties.get(i).get(propertyNames.get(activeProperty)), 2)));
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 200, new MyCallback());
             }
             else
