@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -51,6 +52,7 @@ import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
 import de.codefest8.gamification8.models.AchievementDTO;
+import de.codefest8.gamification8.models.TripDTO;
 import de.codefest8.gamification8.network.AchievementsResolver;
 import de.codefest8.gamification8.network.ResponseCallback;
 import de.codefest8.gamification8.network.TripPointsResolver;
@@ -66,6 +68,7 @@ public class TrackDetailFragment extends Fragment  {
     private List<Map<String, Double>> properties;
     private Map<String, Pair<Double, Double>> propertiesMinMax;
     private List<String> propertyNames;
+    private TripDTO trip;
 
     private AlertDialog loadingDataDialog;
 
@@ -89,7 +92,9 @@ public class TrackDetailFragment extends Fragment  {
 
         view = inflater.inflate(R.layout.fragment_trackdetail, container,
                 false);
+        trip = GlobalState.getInstance().getTrip();
 
+        initValues();
         initMapDataSpinner();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -102,6 +107,34 @@ public class TrackDetailFragment extends Fragment  {
         mMapView.onCreate(savedInstanceState);
 
         return view;
+    }
+
+    public void initValues() {
+        ((TextView)view.findViewById(R.id.trip_distance_value)).setText(trip.getRouteLengthKMString());
+        ((TextView)view.findViewById(R.id.trip_time_value)).setText(trip.getStartTimeString());
+        Random random = new Random();
+        int grade = random.nextInt(4);
+        int color = getResources().getColor(R.color.white);
+        switch(grade) {
+            case 0:
+                color = getResources().getColor(R.color.red);
+                break;
+            case 1:
+                color = getResources().getColor(R.color.pink);
+                break;
+            case 2:
+                color = getResources().getColor(R.color.white);
+                break;
+            case 3:
+                color = getResources().getColor(R.color.light_green);
+                break;
+            default:
+                color = getResources().getColor(R.color.green);
+
+        }
+        String[] grades = getResources().getStringArray(R.array.grades);
+        ((TextView) view.findViewById(R.id.trip_rel_grade_value)).setText(grades[grade]);
+        ((TextView) view.findViewById(R.id.trip_rel_grade_value)).setTextColor(color);
     }
 
     public class MapOptionsSpinnerAdapater extends BaseAdapter implements SpinnerAdapter {
@@ -210,7 +243,7 @@ public class TrackDetailFragment extends Fragment  {
 
     private void loadData() {
         loadingDataDialog.show();
-        TripPointsResolver resolver = new TripPointsResolver(new TripPointsResponseCallback(), GlobalState.getInstance().getTrip());
+        TripPointsResolver resolver = new TripPointsResolver(new TripPointsResponseCallback(), trip);
         resolver.doRequestArray();
     }
 

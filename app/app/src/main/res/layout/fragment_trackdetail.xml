@@ -2,20 +2,95 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/track_detail">
+    android:id="@+id/track_detail"
+    android:background="@drawable/bg">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="10"
+        android:layout_marginLeft="@dimen/user_detail_text_margin"
+        android:layout_marginRight="@dimen/user_detail_text_margin">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/user_detail_text_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/trip_start_time"
+                android:id="@+id/trip_time_label" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/trip_time_value"
+                android:layout_marginLeft="@dimen/user_detail_text_margin" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/user_detail_text_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/trip_distance"
+                android:id="@+id/trip_distance_label" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/trip_distance_value"
+                android:layout_marginLeft="@dimen/user_detail_text_margin" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/trip_rel_grade"
+                android:id="@+id/trip_rel_grade_label"
+                android:layout_marginTop="@dimen/user_detail_text_margin" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/trip_rel_grade_value"
+                android:layout_marginTop="@dimen/user_detail_text_margin"
+                android:layout_marginLeft="@dimen/user_detail_text_margin" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <com.google.android.gms.maps.MapView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1" />
+        android:layout_weight="5" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="10"
+        android:layout_weight="12"
         android:gravity="center_vertical">
 
         <TextView
@@ -33,30 +108,3 @@
     </LinearLayout>
 
 </LinearLayout>
-
-<!--
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/map">
-    android:layout_height="match_parent"
-    android:background="@drawable/main_background">
-
-
-</LinearLayout>
-
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    android:name="com.google.android.gms.maps.MapFragment"
-    android:id="@+id/map"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
-
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/lineartab" />
--->

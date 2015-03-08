@@ -36,6 +36,13 @@
         <item>Green is low consume</item>
         <item>Green is low RPM</item>
     </string-array>
+    <string-array name="grades">
+        <item>terrible</item>
+        <item>poor</item>
+        <item>okay</item>
+        <item>good</item>
+        <item>perfect</item>
+    </string-array>
 
     <string name="title_activity_history">Previous Cruises</string>
     <string name="drawer_open">Drawer open</string>
@@ -50,4 +57,7 @@
     <string name="tab_achievements">Achievements</string>
     <string name="tab_trips">Trips</string>
     <string name="choose_map_data">Display data:</string>
+    <string name="trip_start_time">Date and time:</string>
+    <string name="trip_distance">Distance:</string>
+    <string name="trip_rel_grade">Relative grade:</string>
 </resources>
