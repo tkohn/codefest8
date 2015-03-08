@@ -15,9 +15,11 @@ public class AchievementDTO {
     private static final String FIELD_POINTS = "points";
     private static final String FIELD_USER = "user";
     private static final String FIELD_TRIP = "trip";
+    private static final String FIELD_DESCR = "description";
 
     private long id;
     private String name;
+    private String description;
     private int points;
     private UserDTO user;
     private TripDTO trip;
@@ -34,6 +36,12 @@ public class AchievementDTO {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
     public int getPoints() {
         return points;
@@ -60,6 +68,7 @@ public class AchievementDTO {
             achievement.setId(object.getLong(FIELD_ID));
             achievement.setName(object.getString(FIELD_NAME));
             achievement.setPoints(object.getInt(FIELD_POINTS));
+            achievement.setDescription(object.getString(FIELD_DESCR));
 
         } catch (JSONException ex) {
             UserMessagesHandler.getInstance().registerError("Error while parsing UserDTO JSON.");
