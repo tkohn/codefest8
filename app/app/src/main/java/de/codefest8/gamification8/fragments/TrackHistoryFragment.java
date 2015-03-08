@@ -21,15 +21,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import de.codefest8.gamification8.GlobalState;
 import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
 import de.codefest8.gamification8.listadapters.TrackHistoryAdapter;
 import de.codefest8.gamification8.models.TripDTO;
-import de.codefest8.gamification8.network.AchievementsResolver;
 import de.codefest8.gamification8.network.ResponseCallback;
 import de.codefest8.gamification8.network.TripsResolver;
 
@@ -81,8 +78,8 @@ public class TrackHistoryFragment extends ListFragment {
                 sendIntent.setType("text/plain");
                 startActivity(sendIntent);
                 break;
-            case R.id.action_export:
-                // todo
+            case R.id.action_save:
+
                 break;
             case R.id.action_delete:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
