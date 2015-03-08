@@ -24,10 +24,11 @@ public class TrackHistoryAdapter extends ArrayAdapter<TripDTO> {
 
     public View getView(int position, View convertView, ViewGroup parent)
     {
+        TripDTO current = values[position];
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.element_trackhistory, parent, false);
         TextView textView = (TextView) view.findViewById(R.id.history_row_label);
-        textView.setText("dummy date");
+        textView.setText(current.getStartTimeString() + " - " + current.getRouteLengthKMString() + " km" );
         return view;
     }
 }
