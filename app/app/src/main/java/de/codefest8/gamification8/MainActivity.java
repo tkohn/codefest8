@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity {
         UserMessagesHandler.getInstance().setApplicationContext(getApplicationContext());
 
         UserDTO user = new UserDTO();
-        user.setId(0);
+        user.setId(1);
         user.setName("James Bond");
         user.setPassword("topsecret");
         GlobalState.getInstance().setUser(user);
