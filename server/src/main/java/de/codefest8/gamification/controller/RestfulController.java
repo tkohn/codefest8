@@ -4,10 +4,7 @@ import de.codefest8.gamification.dto.*;
 import de.codefest8.gamification.service.Service;
 import de.codefest8.gamification.service.ServiceImpl;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -23,6 +20,17 @@ public class RestfulController {
         this.service = new ServiceImpl();
     }
 
+    @POST
+    @Path("login/")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public UserSimpleDTO login(UserSimpleDTO userSimpleDTO){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(userSimpleDTO.getName());
+        userDTO.setPassword(userSimpleDTO.getPassword());
+        return service.authenticate(userDTO);
+    }
+
     @GET
     @Path("users/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -35,6 +43,13 @@ public class RestfulController {
     @Produces(MediaType.APPLICATION_JSON)
     public UserSimpleDTO findUser(@PathParam("user_id") long user_id) {
         return service.findUser(new UserDTO(user_id));
+    }
+
+    @GET
+    @Path("users/{user_id}/friends")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserSimpleDTO> findAllFriends(@PathParam("user_id") long user_id) {
+        return service.findAllFriends(new UserDTO(user_id));
     }
 
     @GET
@@ -63,6 +78,13 @@ public class RestfulController {
     @Produces(MediaType.APPLICATION_JSON)
     public TripSimpleDTO findTrip(@PathParam("user_id") long user_id, @PathParam("trip_id") long trip_id) {
         return service.findTrip(new UserDTO(user_id), new TripDTO(trip_id));
+    }
+
+    @GET
+    @Path("users/{user_id}/trips/{trip_id}/fuel")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TripDataFuelDTO getFuelEconomy(@PathParam("user_id") long user_id, @PathParam("trip_id") long trip_id) {
+        return service.getTripFuelEconomy(new TripDTO(trip_id));
     }
 
     @GET

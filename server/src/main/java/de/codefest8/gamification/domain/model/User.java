@@ -15,14 +15,18 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = User.FIND_BY_ID, query = "SELECT e FROM User e WHERE e.id = :user_id"),
         @NamedQuery(name = User.FIND_ALL, query = "SELECT e FROM User e"),
-        @NamedQuery(name = User.FIND_ALL_FRIENDS, query = "SELECT e.friends FROM User e WHERE e.id = :user_id")
+        @NamedQuery(name = User.FIND_ALL_FRIENDS, query = "SELECT e.friends FROM User e WHERE e.id = :user_id"),
+        @NamedQuery(name = User.AUTHENTICATE, query = "SELECT e FROM User e WHERE e.name = :user_name AND e.password = :user_password")
 })
 public class User {
 
     public static final String FIND_BY_ID = "findById";
     public static final String FIND_ALL = "findAll";
     public static final String FIND_ALL_FRIENDS = "findAllFriends";
+    public static final String AUTHENTICATE = "authenticate";
     public static final String PARAMETER_USER_ID = "user_id";
+    public static final String PARAMETER_NAME = "user_name";
+    public static final String PARAMETER_PASSWORD = "user_password";
 
     @TableGenerator(name = "USER_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", allocationSize = 1)
     @Id

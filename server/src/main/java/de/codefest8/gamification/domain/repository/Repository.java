@@ -4,6 +4,8 @@ import de.codefest8.gamification.domain.model.Achievement;
 import de.codefest8.gamification.domain.model.Trip;
 import de.codefest8.gamification.domain.model.TripData;
 import de.codefest8.gamification.domain.model.User;
+import de.codefest8.gamification.dto.TripDTO;
+import de.codefest8.gamification.dto.TripDataFuelDTO;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -15,6 +17,7 @@ public interface Repository {
 
     // ##### ##### ##### ##### User ##### ##### ##### #####
 
+    User authenticate(User user);
     User store(User user);
 
     User findUser(User user);
@@ -40,4 +43,5 @@ public interface Repository {
     double getRouteLength(Trip trip);
     Timestamp getStartTime(Trip trip);
     double[][] getTripPositions(Trip trip);
+    TripDataFuelDTO getTripFuelEconomy(Trip trip);
 }

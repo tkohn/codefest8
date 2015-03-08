@@ -12,6 +12,7 @@ public class UserSimpleDTO {
 
     private long id;
     private String name;
+    private String password;
     private long[] friends;
     private long[] trips;
     private long[] achievements;
@@ -21,6 +22,19 @@ public class UserSimpleDTO {
         this.name = userDTO.getName();
         this.trips = getSimpleTrips(userDTO.getTrips());
         this.achievements = getSimpleAchievements(userDTO.getAchievements());
+    }
+
+    public UserSimpleDTO() {
+    }
+
+    public UserSimpleDTO(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
+
+    public UserSimpleDTO(long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     private long[] getSimpleAchievements(List<AchievementDTO> achievements) {
@@ -87,4 +101,11 @@ public class UserSimpleDTO {
         this.achievements = achievements;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

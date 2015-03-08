@@ -11,9 +11,11 @@ public interface Service {
 
     // ##### ##### ##### ##### User ##### ##### ##### #####
 
+    UserSimpleDTO authenticate(UserDTO userDTO);
     List<UserSimpleDTO> findAllUser();
 
     UserSimpleDTO findUser(UserDTO userDTO);
+    List<UserSimpleDTO> findAllFriends(UserDTO userDTO);
 
 
     // ##### ##### ##### ##### Achievement ##### ##### ##### #####
@@ -28,4 +30,5 @@ public interface Service {
     TripSimpleDTO findTrip(UserDTO userDTO, TripDTO tripDTO);
 
     double[][] getTripPositions(TripDTO tripDTO);
+    TripDataFuelDTO getTripFuelEconomy(TripDTO tripDTO);
 }

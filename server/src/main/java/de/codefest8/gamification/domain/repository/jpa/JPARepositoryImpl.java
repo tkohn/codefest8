@@ -4,9 +4,11 @@ import de.codefest8.gamification.domain.model.Achievement;
 import de.codefest8.gamification.domain.model.Trip;
 import de.codefest8.gamification.domain.model.User;
 import de.codefest8.gamification.domain.repository.Repository;
+import de.codefest8.gamification.dto.TripDataFuelDTO;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +28,17 @@ public class JPARepositoryImpl implements Repository {
     }
 
     // ##### ##### ##### ##### User ##### ##### ##### #####
+
+    @Override
+    public User authenticate(User user) {
+        EntityManager manager = factory.createEntityManager();
+        TypedQuery<User> query = manager.createNamedQuery(User.AUTHENTICATE, User.class);
+        query.setParameter(User.PARAMETER_NAME, user.getName());
+        query.setParameter(User.PARAMETER_PASSWORD, user.getPassword());
+        User result = query.getSingleResult();
+        manager.close();
+        return result;
+    }
 
     @Override
     public User store(User user) {
@@ -58,7 +71,19 @@ public class JPARepositoryImpl implements Repository {
 
     @Override
     public List<User> findAllFriends(User user) {
-        return null;
+        EntityManager manager = factory.createEntityManager();
+        Query query = manager.createNativeQuery("select car_user.id, car_user.name from friends inner join car_user on car_user.id = friend_id where friends.user_id = ?;");
+        query.setParameter(1, user.getId());
+        List<Object[]> resultList = query.getResultList();
+        List<User> userList = new ArrayList<>();
+        User tempUser;
+        for (Object[] elem: resultList){
+            tempUser = new User();
+            tempUser.setId((long)elem[0]);
+            tempUser.setName((String)elem[1]);
+            userList.add(tempUser);
+        }
+        return userList;
     }
 
     @Override
@@ -158,5 +183,27 @@ public class JPARepositoryImpl implements Repository {
 
         manager.close();
         return results;
+    }
+
+    @Override
+    public TripDataFuelDTO getTripFuelEconomy(Trip trip) {
+        EntityManager manager = factory.createEntityManager();
+        Query query = manager.createNativeQuery("select length from (select ST_Length(ST_MakeLine(gps.position)::geography) from (select position from trip_data where trip_id = ? order by datetime asc) as gps) as length;");
+        query.setParameter(1, trip.getId());
+        String temp = query.getSingleResult().toString();
+        temp = temp.substring(1, temp.length()-1);
+        double length = new Double(temp);
+
+
+        query = manager.createNativeQuery("select lpm from (select (1/avg(kpl))/1000 from trip_data where trip_id = ?) as lpm;");
+        query.setParameter(1, trip.getId());
+
+        temp = query.getSingleResult().toString();
+        temp = temp.substring(1, temp.length()-1);
+        double lpm = new Double(temp);
+        TripDataFuelDTO result = new TripDataFuelDTO();
+        result.setId(trip.getId());
+        result.setFuelEconomy(length*lpm);
+        return result;
     }
 }

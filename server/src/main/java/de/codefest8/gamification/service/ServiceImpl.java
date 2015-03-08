@@ -9,6 +9,9 @@ import de.codefest8.gamification.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
+import javax.persistence.NoResultException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,22 @@ public class ServiceImpl implements Service {
     }
 
     // ##### ##### ##### ##### User ##### ##### ##### #####
+
+    @Override
+    public UserSimpleDTO authenticate(UserDTO userDTO) {
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+        User result = mapper.map(userDTO, User.class);
+        try {
+            result = repository.authenticate(result);
+        } catch (NoResultException nre) {
+            throw new WebApplicationException(createResponse(
+                    Response.Status.UNAUTHORIZED,
+                    "Your login information was incorrect"));
+
+        }
+        return new UserSimpleDTO(mapper.map(result, UserDTO.class));
+    }
+
     @Override
     public List<UserSimpleDTO> findAllUser() {
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
@@ -42,8 +61,17 @@ public class ServiceImpl implements Service {
         return new UserSimpleDTO(mapper.map(result, UserDTO.class));
     }
 
+    @Override
+    public List<UserSimpleDTO> findAllFriends(UserDTO userDTO) {
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+        List<UserSimpleDTO> userSimpleDTOs = new ArrayList<>();
+        for (User elem: repository.findAllFriends(mapper.map(userDTO, User.class))){
+            userSimpleDTOs.add(new UserSimpleDTO(mapper.map(elem, UserDTO.class)));
+        }
+        return userSimpleDTOs;
+    }
 
-    // ##### ##### ##### ##### Achievement ##### ##### ##### #####
+// ##### ##### ##### ##### Achievement ##### ##### ##### #####
 
     @Override
     public List<AchievementDTO> findAllAchievements(UserDTO userDTO) {
@@ -98,5 +126,18 @@ public class ServiceImpl implements Service {
         tempTripSimpleDTO.setRouteLength(repository.getRouteLength(result));
         tempTripSimpleDTO.setStartTime(repository.getStartTime(result));
         return tempTripSimpleDTO;
+    }
+
+    @Override
+    public TripDataFuelDTO getTripFuelEconomy(TripDTO tripDTO) {
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+
+        return repository.getTripFuelEconomy(mapper.map(tripDTO, Trip.class));
+    }
+
+    private Response createResponse(final Response.Status status, final String message) {
+        Response.ResponseBuilder responseBuilder = Response.status(status);
+        responseBuilder.entity(message);
+        return responseBuilder.build();
     }
 }
