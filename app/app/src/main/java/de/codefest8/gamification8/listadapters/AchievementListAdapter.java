@@ -29,7 +29,7 @@ public class AchievementListAdapter extends ArrayAdapter<AchievementDTO> {
         TextView labelView = (TextView) view.findViewById(R.id.label);
         TextView descrView = (TextView) view.findViewById(R.id.description);
         labelView.setText(values[position].getName());
-        descrView.setText(Integer.toString(values[position].getPoints()) + " points achieved in this achievement!");
+        descrView.setText(values[position].getDescription());
         return view;
     }
 
