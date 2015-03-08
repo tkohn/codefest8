@@ -1,6 +1,7 @@
 package de.codefest8.gamification.controller;
 
 import de.codefest8.gamification.dto.TripDTO;
+import de.codefest8.gamification.dto.TripSimpleDTO;
 import de.codefest8.gamification.dto.UserDTO;
 import de.codefest8.gamification.dto.UserSimpleDTO;
 import de.codefest8.gamification.service.Service;
@@ -35,15 +36,22 @@ public class RestfulController {
     @GET
     @Path("users/{user_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO findUser(@PathParam("user_id") long user_id) {
+    public UserSimpleDTO findUser(@PathParam("user_id") long user_id) {
         return service.findUser(new UserDTO(user_id));
     }
 
     @GET
     @Path("users/{user_id}/trips")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TripDTO> findAllTrips(@PathParam("user_id") long user_id) {
+    public List<TripSimpleDTO> findAllTrips(@PathParam("user_id") long user_id) {
         return service.findAllTrips(new UserDTO(user_id));
+    }
+
+    @GET
+    @Path("users/{user_id}/trips/{trip_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TripSimpleDTO findTrip(@PathParam("user_id") long user_id, @PathParam("trip_id") long trip_id) {
+        return service.findTrip(new UserDTO(user_id), new TripDTO(trip_id));
     }
 
 }

@@ -5,11 +5,13 @@ import de.codefest8.gamification.domain.model.User;
 import de.codefest8.gamification.domain.repository.Repository;
 import de.codefest8.gamification.domain.repository.RepositoryFactory;
 import de.codefest8.gamification.dto.TripDTO;
+import de.codefest8.gamification.dto.TripSimpleDTO;
 import de.codefest8.gamification.dto.UserDTO;
 import de.codefest8.gamification.dto.UserSimpleDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,30 +37,41 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public UserDTO findUser(UserDTO userDTO) {
+    public UserSimpleDTO findUser(UserDTO userDTO) {
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
         User result = mapper.map(userDTO, User.class);
         result = repository.findUser(result);
-        return mapper.map(result, UserDTO.class);
+        return new UserSimpleDTO(mapper.map(result, UserDTO.class));
     }
 
     // ##### ##### ##### ##### Trip ##### ##### ##### #####
 
     @Override
-    public List<TripDTO> findAllTrips(UserDTO userDTO) {
+    public List<TripSimpleDTO> findAllTrips(UserDTO userDTO) {
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
-        List<TripDTO> tripDTOs = new ArrayList<>();
+        List<TripSimpleDTO> tripDTOs = new ArrayList<>();
+        TripSimpleDTO tempTripSimpleDTO;
+        double routeLength;
+        Timestamp startTime;
         for (Trip elem : repository.findAllTrips(mapper.map(userDTO, User.class))) {
-            tripDTOs.add(mapper.map(elem, TripDTO.class));
+            tempTripSimpleDTO = new TripSimpleDTO(mapper.map(elem, TripDTO.class));
+            tempTripSimpleDTO.setRouteLength(repository.getRouteLength(elem));
+            tempTripSimpleDTO.setStartTime(repository.getStartTime(elem));
+            tripDTOs.add(tempTripSimpleDTO);
         }
         return tripDTOs;
     }
 
     @Override
-    public TripDTO findTrip(UserDTO userDTO, TripDTO tripDTO) {
+    public TripSimpleDTO findTrip(UserDTO userDTO, TripDTO tripDTO) {
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
         Trip result = mapper.map(tripDTO, Trip.class);
+        TripSimpleDTO tempTripSimpleDTO;
         result = repository.findTrip(mapper.map(userDTO, User.class), result);
-        return mapper.map(result, TripDTO.class);
+
+        tempTripSimpleDTO = new TripSimpleDTO(mapper.map(result, TripDTO.class));
+        tempTripSimpleDTO.setRouteLength(repository.getRouteLength(result));
+        tempTripSimpleDTO.setStartTime(repository.getStartTime(result));
+        return tempTripSimpleDTO;
     }
 }

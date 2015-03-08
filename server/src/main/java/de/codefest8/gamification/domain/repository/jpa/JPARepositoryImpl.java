@@ -1,13 +1,13 @@
 package de.codefest8.gamification.domain.repository.jpa;
 
 import de.codefest8.gamification.domain.model.Trip;
+import de.codefest8.gamification.domain.model.TripData;
 import de.codefest8.gamification.domain.model.User;
 import de.codefest8.gamification.domain.repository.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -42,7 +42,7 @@ public class JPARepositoryImpl implements Repository {
     public User findUser(User user) {
         EntityManager manager = factory.createEntityManager();
         TypedQuery<User> query = manager.createNamedQuery(User.FIND_BY_ID, User.class);
-        query.setParameter(User.PARAMETER_USER_ID, User.class);
+        query.setParameter(User.PARAMETER_USER_ID, user.getId());
         User result = query.getSingleResult();
         manager.close();
         return result;
@@ -81,6 +81,29 @@ public class JPARepositoryImpl implements Repository {
         query.setParameter(Trip.PARAMETER_TRIP_ID, trip.getId());
         query.setParameter(User.PARAMETER_USER_ID, user.getId());
         Trip result = query.getSingleResult();
+        manager.close();
+        return result;
+    }
+
+    // ##### ##### ##### ##### Trip ##### ##### ##### #####
+
+    // TODO fix this bullshit
+    @Override
+    public double getRouteLength(Trip trip) {
+        EntityManager manager = factory.createEntityManager();
+        Query query = manager.createNativeQuery("select ST_Length(ST_MakeLine(gps.position)::geography) from (select position from trip_data where trip_id = ? order by datetime asc) as gps;");
+        query.setParameter(1, trip.getId());
+        double result = (double) query.getSingleResult();
+        manager.close();
+        return result;
+    }
+
+    @Override
+    public Timestamp getStartTime(Trip trip) {
+        EntityManager manager = factory.createEntityManager();
+        Query query = manager.createNativeQuery("select datetime from trip_data where trip_id = ? order by datetime  asc limit 1;");
+        query.setParameter(1, trip.getId());
+        Timestamp result = (Timestamp) query.getSingleResult();
         manager.close();
         return result;
     }

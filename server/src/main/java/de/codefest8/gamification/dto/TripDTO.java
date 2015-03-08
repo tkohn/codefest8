@@ -18,6 +18,10 @@ public class TripDTO {
     public TripDTO() {
     }
 
+    public TripDTO(long id) {
+        this.id = id;
+    }
+
     public long getId() {
         return id;
     }

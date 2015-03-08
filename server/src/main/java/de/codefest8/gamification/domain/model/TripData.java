@@ -10,8 +10,11 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name= "TRIP_DATA")
+@NamedQueries({
+        })
 public class TripData {
 
+    public static final String GET_ROUTE_LENGTH = "getRouteLength";
     @TableGenerator(name = "TRIP_DATA_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", allocationSize = 1)
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TRIP_DATA_GEN")

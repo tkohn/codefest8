@@ -1,6 +1,7 @@
 package de.codefest8.gamification.service;
 
 import de.codefest8.gamification.dto.TripDTO;
+import de.codefest8.gamification.dto.TripSimpleDTO;
 import de.codefest8.gamification.dto.UserDTO;
 import de.codefest8.gamification.dto.UserSimpleDTO;
 
@@ -15,10 +16,10 @@ public interface Service {
 
     List<UserSimpleDTO> findAllUser();
 
-    UserDTO findUser(UserDTO userDTO);
+    UserSimpleDTO findUser(UserDTO userDTO);
 
     // ##### ##### ##### ##### Trip ##### ##### ##### #####
-    List<TripDTO> findAllTrips(UserDTO userDTO);
+    List<TripSimpleDTO> findAllTrips(UserDTO userDTO);
 
-    TripDTO findTrip(UserDTO userDTO, TripDTO tripDTO);
+    TripSimpleDTO findTrip(UserDTO userDTO, TripDTO tripDTO);
 }
