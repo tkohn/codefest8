@@ -54,13 +54,12 @@ public class AchievementDTO {
         this.trip = trip;
     }
 
-    public static AchievementDTO fromJson(JSONObject object, UserDTO user) {
+    public static AchievementDTO fromJson(JSONObject object) {
         AchievementDTO achievement = new AchievementDTO();
         try {
             achievement.setId(object.getLong(FIELD_ID));
             achievement.setName(object.getString(FIELD_NAME));
             achievement.setPoints(object.getInt(FIELD_POINTS));
-            achievement.setUser(user);
 
         } catch (JSONException ex) {
             UserMessagesHandler.getInstance().registerError("Error while parsing UserDTO JSON.");

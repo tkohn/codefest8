@@ -31,7 +31,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/friend_name"
                     android:text="@string/user_name"
-                    android:layout_marginLeft="@dimen/user_detail_text_margin" />
+                    android:layout_marginLeft="@dimen/user_detail_text_margin"
+                    android:layout_marginRight="@dimen/user_detail_text_margin"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -82,13 +83,13 @@
                 android:layout_height="fill_parent">
 
                 <ListView
-                    android:id="@+id/friend_tab_achievements"
+                    android:id="@+id/friend_achievements_list"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:orientation="vertical"/>
 
                 <ListView
-                    android:id="@+id/friend_tab_trips"
+                    android:id="@+id/friend_trips_list"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:orientation="vertical"/>

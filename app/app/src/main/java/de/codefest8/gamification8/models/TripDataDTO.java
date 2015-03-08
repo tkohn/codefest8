@@ -122,7 +122,7 @@ public class TripDataDTO {
         this.KMPerLiter = KMPerLiter;
     }
 
-    public static TripDataDTO fromJson(JSONObject object, TripDTO trip) {
+    public static TripDataDTO fromJson(JSONObject object) {
         TripDataDTO tripData = new TripDataDTO();
         try {
             tripData.setId(object.getLong(FIELD_ID));
@@ -137,7 +137,6 @@ public class TripDataDTO {
             tripData.setFuelLevel(object.getDouble(FIELD_FUEL_LEVEL));
             tripData.setKMPerLiter(object.getDouble(FIELD_KM_PER_LITER));
             tripData.setDatetime(new Timestamp(object.getLong(FIELD_DATETIME)));
-            tripData.setTrip(trip);
 
         } catch (JSONException ex) {
             UserMessagesHandler.getInstance().registerError("Error while parsing UserDTO JSON.");
