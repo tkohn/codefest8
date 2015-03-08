@@ -54,7 +54,7 @@ public class TripDTO {
     }
 
     public String getStartDateTimeString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("H:m dd. MMMM yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("kk:mm dd. MMMM yyyy");
         return sdf.format(this.getStartTime());
     }
 
