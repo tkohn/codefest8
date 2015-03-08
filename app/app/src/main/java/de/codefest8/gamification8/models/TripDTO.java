@@ -40,11 +40,10 @@ public class TripDTO {
         this.tripDataList = tripDataList;
     }
 
-    public static TripDTO fromJson(JSONObject object, UserDTO user) {
+    public static TripDTO fromJson(JSONObject object) {
         TripDTO trip = new TripDTO();
         try {
             trip.setId(object.getLong(FIELD_ID));
-            trip.setUser(user);
 
         } catch (JSONException ex) {
             UserMessagesHandler.getInstance().registerError("Error while parsing UserDTO JSON.");

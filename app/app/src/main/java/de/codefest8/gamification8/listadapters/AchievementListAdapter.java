@@ -1,4 +1,4 @@
-package de.codefest8.gamification8;
+package de.codefest8.gamification8.listadapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.models.AchievementDTO;
 import de.codefest8.gamification8.models.TripDTO;
 
