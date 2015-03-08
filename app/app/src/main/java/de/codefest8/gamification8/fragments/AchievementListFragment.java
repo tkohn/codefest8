@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -15,21 +16,32 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import de.codefest8.gamification8.GlobalState;
 import de.codefest8.gamification8.R;
+import de.codefest8.gamification8.UserMessagesHandler;
 import de.codefest8.gamification8.listadapters.AchievementListAdapter;
 import de.codefest8.gamification8.models.AchievementDTO;
+import de.codefest8.gamification8.models.TripDTO;
+import de.codefest8.gamification8.network.AchievementsResolver;
+import de.codefest8.gamification8.network.ResponseCallback;
+import de.codefest8.gamification8.network.TripsResolver;
 
-/**
- * Created by koerfer on 07.03.2015.
- */
 public class AchievementListFragment extends ListFragment {
+    private static final String LOG_TAG = "AchievementListFragment";
 
-    private AchievementDTO[] achievements = new AchievementDTO[0];
+    private AchievementDTO[] achievements;
+    private AlertDialog loadingDataDialog;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        achievements = new AchievementDTO[]{new AchievementDTO(), new AchievementDTO()};
-        AchievementListAdapter adapter = new AchievementListAdapter(this.getActivity(), achievements);
-        setListAdapter(adapter);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
+        loadingDataDialog = builder.create();
+
+        loadData();
 
         return inflater.inflate(R.layout.fragment_achievementlist, container, false);
     }
@@ -79,5 +91,46 @@ public class AchievementListFragment extends ListFragment {
                 break;
         }
         return true;
+    }
+
+    class AchievementsResolverCallback implements ResponseCallback {
+
+        @Override
+        public void success(JSONObject response) {
+
+        }
+
+        @Override
+        public void successArray(JSONArray response) {
+            achievements = new AchievementDTO[response.length()];
+            try {
+                for (int i = 0; i < response.length(); i++) {
+                    JSONObject object = response.getJSONObject(i);
+                    achievements[i] = AchievementDTO.fromJson(object);
+                }
+            } catch (JSONException ex) {
+                UserMessagesHandler.getInstance().registerError("Error while parsing achievements list response.");
+                Log.e(LOG_TAG, ex.toString());
+            }
+            loadingDataDialog.dismiss();
+            fillInData();
+        }
+
+        @Override
+        public void fail(int code, String message) {
+            loadingDataDialog.dismiss();
+            UserMessagesHandler.getInstance().registerError("Could not load achievements list.");
+        }
+    }
+
+    public void fillInData() {
+        AchievementListAdapter adapter = new AchievementListAdapter(this.getActivity(), achievements);
+        setListAdapter(adapter);
+    }
+
+    private void loadData() {
+        loadingDataDialog.show();
+        AchievementsResolver resolver = new AchievementsResolver(new AchievementsResolverCallback(), GlobalState.getInstance().getUser());
+        resolver.doRequestArray();
     }
 }

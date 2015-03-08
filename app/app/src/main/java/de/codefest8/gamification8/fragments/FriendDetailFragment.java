@@ -61,21 +61,21 @@ public class FriendDetailFragment extends Fragment {
     }
 
     public void fillInTripsData() {
-        final TripDTO[] trips = new TripDTO[] { new TripDTO(), new TripDTO() };
-        TrackHistoryAdapter adapter = new TrackHistoryAdapter(this.getActivity(), trips);
+        TripDTO[] trips = new TripDTO[user.getTrips().size()];
+        TrackHistoryAdapter adapter = new TrackHistoryAdapter(this.getActivity(), user.getTrips().toArray(trips));
         ((ListView)view.findViewById(R.id.friend_trips_list)).setAdapter(adapter);
         ((ListView)view.findViewById(R.id.friend_trips_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                GlobalState.getInstance().setTrip(trips[position]);
+                GlobalState.getInstance().setTrip(user.getTrips().get(position));
                 ((MainActivity)getActivity()).goToFragment(FragmentType.TrackDetail);
             }
         });
     }
 
     public void fillInAchievements() {
-        AchievementDTO[] achievements = new AchievementDTO[] { new AchievementDTO(), new AchievementDTO() };
-        AchievementListAdapter adapter = new AchievementListAdapter(this.getActivity(), achievements);
+        AchievementDTO[] achievements = new AchievementDTO[user.getAchievements().size()];
+        AchievementListAdapter adapter = new AchievementListAdapter(this.getActivity(), user.getAchievements().toArray(achievements));
         ((ListView)view.findViewById(R.id.friend_achievements_list)).setAdapter(adapter);
 //        ((ListView)view.findViewById(R.id.friend_achievements_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
