@@ -142,7 +142,7 @@ public class TrackDetailFragment extends Fragment  {
         ((TextView)view.findViewById(R.id.trip_time_value)).setText(trip.getStartDateTimeString());
 
         Random random = new Random();
-        int grade = random.nextInt(4);
+        int grade = random.nextInt(5);
         int color;
         switch(grade) {
             case 0:
@@ -604,14 +604,6 @@ public class TrackDetailFragment extends Fragment  {
         }
         @Override
         public void onCancel() {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (LatLng ll : points)
-            {
-                builder.include(ll);
-            }
-            CameraUpdate initialUpdate = CameraUpdateFactory.newLatLngBounds(builder.build(), 20);
-
-            googleMap.moveCamera(initialUpdate);
             googleMap.setOnMapLongClickListener(longclicklistener);
         }
     };
