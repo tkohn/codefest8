@@ -67,5 +67,11 @@
     <string name="trip_start_time">Date and time:</string>
     <string name="trip_distance">Distance:</string>
     <string name="trip_rel_grade">Relative grade:</string>
+    <string name="about_credits_1">Alexander Devaykin</string>
+    <string name="about_credits_2">Torsten Kohn</string>
+    <string name="about_credits_3">Lukas Körfer</string>
+    <string name="about_credits_4">Kevin Leonardic</string>
+    <string name="about_footer">codeFEST8</string>
+    <string name="about_header">AixCruise</string>
     <string name="trip_fuel_economy">Fuel consumed:</string>
 </resources>
