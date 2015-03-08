@@ -130,7 +130,7 @@ public class JPARepositoryImpl implements Repository {
     @Override
     public double[][] getTripPositions(Trip trip) {
         EntityManager manager = factory.createEntityManager();
-        Query query = manager.createNativeQuery("select ST_X(position::geometry) as long, ST_Y(position::geometry) as lat, gps_speed_kmh, engine_load, engine_rpm, air_temperature, fuel_level, kpl from trip_data where trip_id = ?;");
+        Query query = manager.createNativeQuery("select ST_X(position::geometry) as long, ST_Y(position::geometry) as lat, gps_speed_kmh, engine_load, engine_rpm, air_temperature, fuel_level, kpl from trip_data where trip_id = ? order by datetime asc;");
         query.setParameter(1, trip.getId());
         List<Object[]> resultList = query.getResultList();
 
