@@ -107,7 +107,7 @@ public class FriendDetailFragment extends Fragment {
                 }
                 user.setTrips(new ArrayList<>(trips));
             } catch (JSONException ex) {
-                UserMessagesHandler.getInstance().registerError("Error while parsing friends list response.");
+                UserMessagesHandler.getInstance().registerError("Error while parsing trips list response.");
                 Log.e(LOG_TAG, ex.toString());
             }
 
@@ -120,7 +120,7 @@ public class FriendDetailFragment extends Fragment {
         @Override
         public void fail(int code, String message) {
             loadingDataDialog.dismiss();
-            UserMessagesHandler.getInstance().registerError("Could not load friends list.");
+            UserMessagesHandler.getInstance().registerError("Could not load trips list.");
         }
     }
 
@@ -143,7 +143,7 @@ public class FriendDetailFragment extends Fragment {
                 }
                 user.setAchievements(new ArrayList<>(achievements));
             } catch (JSONException ex) {
-                UserMessagesHandler.getInstance().registerError("Error while parsing friends list response.");
+                UserMessagesHandler.getInstance().registerError("Error while parsing achievements list response.");
                 Log.e(LOG_TAG, ex.toString());
             }
 
@@ -153,7 +153,7 @@ public class FriendDetailFragment extends Fragment {
         @Override
         public void fail(int code, String message) {
             loadingDataDialog.dismiss();
-            UserMessagesHandler.getInstance().registerError("Could not load friends list.");
+            UserMessagesHandler.getInstance().registerError("Could not load achievements list.");
         }
     }
 
