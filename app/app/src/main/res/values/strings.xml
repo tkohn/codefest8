@@ -67,4 +67,5 @@
     <string name="trip_start_time">Date and time:</string>
     <string name="trip_distance">Distance:</string>
     <string name="trip_rel_grade">Relative grade:</string>
+    <string name="trip_fuel_economy">Fuel consumed:</string>
 </resources>
