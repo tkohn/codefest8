@@ -1,13 +1,13 @@
 package de.codefest8.gamification8.network;
 
-import de.codefest8.gamification8.models.User;
+import de.codefest8.gamification8.models.UserDTO;
 
-public class AchievenemtResolver extends AbstractResolver {
+public class AchievementsResolver extends AbstractResolver {
     private static final String URL_RELATIVE = "/achievements/";
 
-    private User user;
+    private UserDTO user;
 
-    public AchievenemtResolver(ResponseCallback callback, User user) {
+    public AchievementsResolver(ResponseCallback callback, UserDTO user) {
         super(callback);
         this.user = user;
     }
