@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -35,9 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +45,9 @@ import java.util.TimerTask;
 import static java.lang.Math.*;
 
 import de.codefest8.gamification8.GlobalState;
-import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
-import de.codefest8.gamification8.models.AchievementDTO;
 import de.codefest8.gamification8.models.TripDTO;
-import de.codefest8.gamification8.network.AchievementsResolver;
 import de.codefest8.gamification8.network.ResponseCallback;
 import de.codefest8.gamification8.network.TripPointsResolver;
 
@@ -69,6 +63,8 @@ public class TrackDetailFragment extends Fragment  {
     private Map<String, Pair<Double, Double>> propertiesMinMax;
     private List<String> propertyNames;
     private TripDTO trip;
+    private TextView mapOverlayText;
+    int activeProperty;
 
     private AlertDialog loadingDataDialog;
 
@@ -93,6 +89,9 @@ public class TrackDetailFragment extends Fragment  {
         view = inflater.inflate(R.layout.fragment_trackdetail, container,
                 false);
         trip = GlobalState.getInstance().getTrip();
+        mapOverlayText = (TextView)view.findViewById(R.id.map_overlay_text);
+        mapOverlayText.setTextColor(getResources().getColor(R.color.black));
+        activeProperty = 0;
 
         initValues();
 
@@ -114,7 +113,7 @@ public class TrackDetailFragment extends Fragment  {
 
         Random random = new Random();
         int grade = random.nextInt(4);
-        int color = getResources().getColor(R.color.white);
+        int color;
         switch(grade) {
             case 0:
                 color = getResources().getColor(R.color.red);
@@ -287,6 +286,7 @@ public class TrackDetailFragment extends Fragment  {
     private void createMarkersAndRoute(int activeProperty)
     {
         googleMap.clear();
+        this.activeProperty = activeProperty;
 
         // create marker
         marker = new MarkerOptions().position(points.get(0)).title("Trip Start");
@@ -387,6 +387,8 @@ public class TrackDetailFragment extends Fragment  {
                                                 .anchor(0.5f, 3.0f / 5.0f)
                                                 .rotation(1.0f / heading);
                                         oldMarker = googleMap.addMarker(newMarker);
+
+                                        mapOverlayText.setText(String.valueOf((int)Math.floor(properties.get(i).get(propertyNames.get(activeProperty)))));
                                     } else {
                                         t.cancel();
                                     }
