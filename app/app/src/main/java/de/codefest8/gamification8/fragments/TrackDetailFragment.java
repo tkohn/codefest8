@@ -272,22 +272,9 @@ public class TrackDetailFragment extends Fragment  {
             }},500);
     }
 
-    private void startMap() {
-        mMapView.onResume();// needed to get the map to display immediately
-
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        googleMap = mMapView.getMap();
-
-        if(points.isEmpty())
-        {
-            Log.e("FATAL ERROR", "NO POINTS FOUND");
-            return;
-        }
+    private void createMarkersAndRoute(int activeProperty)
+    {
+        googleMap.clear();
 
         // create marker
         marker = new MarkerOptions().position(points.get(0)).title("Trip Start");
@@ -306,7 +293,7 @@ public class TrackDetailFragment extends Fragment  {
         googleMap.addMarker(marker);
 
         int distance = 5;
-        int activeProperty = 0;
+        //int activeProperty = 0;
         for(int c = 0; c < points.size()-distance; c+=distance) {
             double value = 0;
             for(int i = 0; i < distance; i++)
@@ -332,6 +319,26 @@ public class TrackDetailFragment extends Fragment  {
                 multiPoint.add(points.get(id));
             }
             googleMap.addPolyline(multiPoint);
+        }
+    }
+
+    private void startMap() {
+        mMapView.onResume();// needed to get the map to display immediately
+
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        googleMap = mMapView.getMap();
+
+        createMarkersAndRoute(0);
+
+        if(points.isEmpty())
+        {
+            Log.e("FATAL ERROR", "NO POINTS FOUND");
+            return;
         }
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
