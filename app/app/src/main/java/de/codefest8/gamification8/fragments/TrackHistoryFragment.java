@@ -52,6 +52,7 @@ public class TrackHistoryFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        GlobalState.getInstance().setTrip(trips[position]);
         ((MainActivity)this.getActivity()).goToFragment(FragmentType.TrackDetail);
     }
 

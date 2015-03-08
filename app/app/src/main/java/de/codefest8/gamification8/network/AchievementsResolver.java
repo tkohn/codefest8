@@ -3,7 +3,7 @@ package de.codefest8.gamification8.network;
 import de.codefest8.gamification8.models.UserDTO;
 
 public class AchievementsResolver extends AbstractResolver {
-    private static final String URL_USER = "/user/";
+    private static final String URL_USER = "/users/";
     private static final String URL_ACHIEVEMENTS = "/achievements/";
 
     private UserDTO user;

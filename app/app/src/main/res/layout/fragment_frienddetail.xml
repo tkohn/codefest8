@@ -63,39 +63,34 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TabHost
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tabHost">
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/recent_trip"
+        android:id="@+id/recent_trips_label"
+        android:layout_marginTop="@dimen/user_detail_text_margin" />
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical">
+    <ListView
+        android:id="@+id/friend_trips_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_weight="4" />
 
-            <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/recent_achievements"
+        android:id="@+id/recent_achievements_label"
+        android:layout_marginTop="@dimen/user_detail_text_margin" />
 
-            <FrameLayout
-                android:id="@android:id/tabcontent"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+    <ListView
+        android:id="@+id/friend_achievements_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_weight="4" />
 
-                <ListView
-                    android:id="@+id/friend_achievements_list"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="vertical"/>
-
-                <ListView
-                    android:id="@+id/friend_trips_list"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="vertical"/>
-
-            </FrameLayout>
-        </LinearLayout>
-    </TabHost>
 </LinearLayout>
