@@ -10,7 +10,7 @@ INSERT INTO trip_data (datetime,
 		air_temperature,
 		fuel_level,
 		kpl)
-SELECT to_timestamp(gps_time, 'Dy Mon DD HH:MI:SS    YYYY') as datetime, 
+SELECT to_timestamp(gps_time, 'Dy Mon DD HH24:MI:SS    YYYY') as datetime, 
 		ST_SetSRID(ST_MakePoint(long, lat),4326) as position,
 		gps_speed_ms,
 		gps_speed_kmh,
