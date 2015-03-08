@@ -32,6 +32,8 @@ import java.util.List;
 import static java.lang.Math.*;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -68,6 +70,11 @@ public class TrackDetailFragment extends Fragment  {
 
     MapView mMapView;
     private GoogleMap googleMap;
+    private MarkerOptions marker;
+
+    Marker oldMarker = null;
+
+    int i = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,7 +99,7 @@ public class TrackDetailFragment extends Fragment  {
         double longitude = 6.0506326;
 
         // create marker
-        MarkerOptions marker = new MarkerOptions().position(
+        marker = new MarkerOptions().position(
                 new LatLng(latitude, longitude)).title("Trip Start");
 
         // Changing marker icon
@@ -307,7 +314,7 @@ public class TrackDetailFragment extends Fragment  {
         googleMap.addPolyline(rectOptions);
 
 
-        List<LatLng> points = new ArrayList<>();
+        final List<LatLng> points = new ArrayList<>();
 
         points.add(new LatLng(50.77738953, 6.0506326));
         points.add(new LatLng(50.77748455, 6.05066935));
@@ -512,80 +519,109 @@ public class TrackDetailFragment extends Fragment  {
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(50.77738953, 6.0506326)).zoom(14).build();
-        googleMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(cameraPosition), 1, null);
 
-        googleMap.animateCamera(
-                CameraUpdateFactory.newCameraPosition(cameraPosition),
-                1,
-                new GoogleMap.CancelableCallback() {
-                    @Override
-                    public void onFinish() {
-                    }
 
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 100, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                final Timer t = new Timer("updateTimer");
+                t.scheduleAtFixedRate(new TimerTask() {
                     @Override
-                    public void onCancel() {
+                    public void run() {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                i++;
+
+                                if (i < points.size() - 1) {
+                                    LatLng cur = points.get(i);
+                                    LatLng nxt = points.get(i + 1);
+                                    Float heading = (float)computeHeading(cur, nxt);
+                                    CameraPosition pos = new CameraPosition.Builder().target(cur).bearing((float)computeHeading(cur, nxt)).tilt(45).zoom(16).build();
+                                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+                                    if (oldMarker != null)
+                                    {
+                                        oldMarker.remove();
+                                    }
+                                    Marker newMarker = new MarkerOptions()
+                                            .position(cur)
+                                            .title("Current Position")
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.));
+                                    oldMarker = googleMap.addMarker(newMarker);
+                                }
+                                else
+                                {
+                                    t.cancel();
+                                }
+                            }
+                        });
                     }
-                }
-        );
+                }, 1000, 200);
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
 /*
         currentIndex++;
         highLightMarker(currentIndex);
 */
 
-        int distance = 20;
-        final int tilt = 45;
-        final int zoomLevel = 16;
-        final int turnSpeed = 100;
-
-        final Handler handler = new Handler();
-        final double duration = 10000;
-
-        final Interpolator interpolator = new BounceInterpolator();
-
-        for(int c = 0; c < points.size()-distance; c+=distance) {
-
-            final double start = SystemClock.uptimeMillis();
-            final LatLng beginPos = points.get(c);
-            final LatLng endPos = points.get(c + distance);
-
-            Float heading = (float)computeHeading(beginPos, endPos);
-
-            //animateTo(endPos, 16, heading, tilt, 10000);
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    double elapsed = SystemClock.uptimeMillis() - start;
-                    float t = Math.max(
-                            1 - interpolator.getInterpolation((float) (elapsed / duration)), 0);
-
-                    double lat = (1-t) * endPos.latitude + t * beginPos.latitude;
-                    double lng = (1-t) * endPos.longitude + t * beginPos.longitude;
-
-                    Float heading = (float)computeHeading(beginPos, endPos);
-
-                    CameraPosition newCam =
-                            new CameraPosition.Builder()
-                                    .target(new LatLng(lat,lng))
-                                    .bearing(heading)
-                                    .tilt(tilt)
-                                    .zoom(zoomLevel)
-                                    .build();
-
-                    googleMap.animateCamera(
-                            CameraUpdateFactory.newCameraPosition(newCam),
-                            turnSpeed,
-                            null
-                    );
-
-                    if (t > 0.0) {
-                        // Post again 16ms later.
-                        handler.postDelayed(this, 32);
-                    }
-                }
-            });
-        }
+//        int distance = 20;
+//        final int tilt = 45;
+//        final int zoomLevel = 16;
+//        final int turnSpeed = 100;
+//
+//        final Handler handler = new Handler();
+//        final double duration = 10000;
+//
+//        final Interpolator interpolator = new BounceInterpolator();
+//
+//        for(int c = 0; c < points.size()-distance; c+=distance) {
+//
+//            final double start = SystemClock.uptimeMillis();
+//            final LatLng beginPos = points.get(c);
+//            final LatLng endPos = points.get(c + distance);
+//
+//            Float heading = (float)computeHeading(beginPos, endPos);
+//
+//            //animateTo(endPos, 16, heading, tilt, 10000);
+//
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    double elapsed = SystemClock.uptimeMillis() - start;
+//                    float t = Math.max(
+//                            1 - interpolator.getInterpolation((float) (elapsed / duration)), 0);
+//
+//                    double lat = (1-t) * endPos.latitude + t * beginPos.latitude;
+//                    double lng = (1-t) * endPos.longitude + t * beginPos.longitude;
+//
+//                    Float heading = (float)computeHeading(beginPos, endPos);
+//
+//                    CameraPosition newCam =
+//                            new CameraPosition.Builder()
+//                                    .target(new LatLng(lat,lng))
+//                                    .bearing(heading)
+//                                    .tilt(tilt)
+//                                    .zoom(zoomLevel)
+//                                    .build();
+//
+//                    googleMap.animateCamera(
+//                            CameraUpdateFactory.newCameraPosition(newCam),
+//                            turnSpeed,
+//                            null
+//                    );
+//
+//                    if (t > 0.0) {
+//                        // Post again 16ms later.
+//                        handler.postDelayed(this, 32);
+//                    }
+//                }
+//            });
+//        }
 
         // Perform any camera updates here
         return v;
