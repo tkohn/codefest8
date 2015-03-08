@@ -35,7 +35,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -60,15 +62,26 @@ public class TrackDetailFragment extends Fragment  {
     MapView mMapView;
     private GoogleMap googleMap;
     private MarkerOptions marker;
-
     private List<LatLng> points;
     private List<Map<String, Double>> properties;
+    private Map<String, Pair<Double, Double>> propertiesMinMax;
+    private List<String> propertyNames;
 
     private AlertDialog loadingDataDialog;
 
     Marker oldMarker = null;
 
     int i = 0;
+
+    public TrackDetailFragment() {
+        propertyNames = new ArrayList<>();
+        propertyNames.add("gps_speed_kmh");
+        propertyNames.add("engine_load");
+        propertyNames.add("engine_rpm");
+        propertyNames.add("air_temperature");
+        propertyNames.add("fuel_level");
+        propertyNames.add("kpl");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -137,7 +150,7 @@ public class TrackDetailFragment extends Fragment  {
         }
         return true;
     }
-
+    
     private class TripPointsResponseCallback implements ResponseCallback {
         @Override
         public void success(JSONObject response) {
@@ -148,12 +161,36 @@ public class TrackDetailFragment extends Fragment  {
         public void successArray(JSONArray response) {
             points = new ArrayList<LatLng>(response.length());
             try {
+                properties = new ArrayList<>();
+                propertiesMinMax = new HashMap<>();
+                for(int i = 0; i < propertyNames.size(); i++)
+                {
+                    propertiesMinMax.put(propertyNames.get(i), new Pair<>(Double.MAX_VALUE, Double.MIN_VALUE));
+                }
+
                 for (int i = 0; i < response.length(); i++) {
                     JSONArray arr = response.getJSONArray(i);
                     points.add(new LatLng(arr.getDouble(1), arr.getDouble(0)));
-                    //Map
-                    //properties.add();
+
+                    Map tempMap = new HashMap<String, Double>();
+                    for(int j = 0; j < propertyNames.size(); j++)
+                    {
+                        int index = j+2; // shift because of prepended long and lat
+                        double tmpValue = arr.getDouble(index);
+                        tempMap.put(propertyNames.get(j), tmpValue);
+                        if(tmpValue < propertiesMinMax.get(propertyNames.get(j)).first)
+                        {
+                            propertiesMinMax.put(propertyNames.get(j),  new Pair<>(tmpValue, propertiesMinMax.get(propertyNames.get(j)).second));
+                        }
+                        if(tmpValue > propertiesMinMax.get(propertyNames.get(j)).second)
+                        {
+                            propertiesMinMax.put(propertyNames.get(j),  new Pair<>(propertiesMinMax.get(propertyNames.get(j)).first, tmpValue));
+                        }
+                    }
+
+                    properties.add(tempMap);
                 }
+
             } catch (JSONException ex) {
                 UserMessagesHandler.getInstance().registerError("Error while parsing achievements list response.");
                 Log.e(LOG_TAG, ex.toString());
@@ -232,9 +269,19 @@ public class TrackDetailFragment extends Fragment  {
         googleMap.addMarker(marker);
 
         int distance = 5;
+        int activeProperty = 0;
         for(int c = 0; c < points.size()-distance; c+=distance) {
+            double value = 0;
+            for(int i = 0; i < distance; i++)
+            {
+                int index = c+i;
+                value += properties.get(index).get(propertyNames.get(activeProperty));
+            }
+            value /= distance;
+
             float[] hsv = new float[3];
-            hsv[0] = ((float)(c-0)/(float)(points.size()-0))*360.0f;
+            hsv[0] = ((float)(value - propertiesMinMax.get(propertyNames.get(activeProperty)).first )/
+                    (float)(propertiesMinMax.get(propertyNames.get(activeProperty)).second - propertiesMinMax.get(propertyNames.get(activeProperty)).first))*360.0f;
             hsv[1] = 1.0f;
             hsv[2] = 0.9f;
             int color = new Color().HSVToColor(hsv);
