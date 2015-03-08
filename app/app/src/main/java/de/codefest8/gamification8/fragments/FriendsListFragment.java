@@ -73,7 +73,7 @@ public class FriendsListFragment extends ListFragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = this.getActivity().getMenuInflater();
-        inflater.inflate(R.menu.contextmenu_friendlist, menu);
+        inflater.inflate(R.menu.menu_friend, menu);
     }
 
     @Override
@@ -89,6 +89,7 @@ public class FriendsListFragment extends ListFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getActivity(), "You removed " + users[info.position].getName() + " from your friend list!", Toast.LENGTH_SHORT).show();
+                        loadData();
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

@@ -25,10 +25,8 @@ import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.UserMessagesHandler;
 import de.codefest8.gamification8.listadapters.AchievementListAdapter;
 import de.codefest8.gamification8.models.AchievementDTO;
-import de.codefest8.gamification8.models.TripDTO;
 import de.codefest8.gamification8.network.AchievementsResolver;
 import de.codefest8.gamification8.network.ResponseCallback;
-import de.codefest8.gamification8.network.TripsResolver;
 
 public class AchievementListFragment extends ListFragment {
     private static final String LOG_TAG = "AchievementListFragment";
@@ -56,7 +54,7 @@ public class AchievementListFragment extends ListFragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = this.getActivity().getMenuInflater();
-        inflater.inflate(R.menu.contextmenu_achievementlist, menu);
+        inflater.inflate(R.menu.menu_achievement, menu);
     }
 
     @Override
@@ -79,6 +77,7 @@ public class AchievementListFragment extends ListFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getActivity(), "Achievement '" + achievements[info.position].getName() + "' reset!", Toast.LENGTH_SHORT).show();
+                        loadData();
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

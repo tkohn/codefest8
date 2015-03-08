@@ -1,298 +1,400 @@
 package de.codefest8.gamification8.fragments;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
+import com.google.android.gms.games.Notifications;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.ArrayList;
-import java.util.List;
-import static java.lang.Math.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static java.lang.Math.*;
+
+import de.codefest8.gamification8.GlobalState;
+import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
+import de.codefest8.gamification8.UserMessagesHandler;
+import de.codefest8.gamification8.models.Fuel;
+import de.codefest8.gamification8.models.TripDTO;
+import de.codefest8.gamification8.network.AchievementsResolver;
+import de.codefest8.gamification8.models.TripDTO;
+import de.codefest8.gamification8.network.ResponseCallback;
+import de.codefest8.gamification8.network.TripFuelResolver;
+import de.codefest8.gamification8.network.TripPointsResolver;
 
-/**
- * Created by koerfer on 07.03.2015.
-
-public class TrackDetailFragment extends Fragment {
-
-    private MapFragment mapFragment;
-    private GoogleMap googleMap;
-    private List<Marker> markers;
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_trackdetail, container, false);
-        return v;
-    }
-
-    public void addMarkerToMap(LatLng latLng) {
-        Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
-                .title("Trip")
-                .snippet("snippet"));
-        markers.add(marker);
-    }
-
-    public void init()
-    {
-        mapFragment = (MapFragment) getChildFragmentManager().getFragments().get(0).findFragmentById(R.id.map);
-        googleMap = mapFragment.getMap();
-        googleMap.setMyLocationEnabled(true);
-    }
-}
-*/
 
 public class TrackDetailFragment extends Fragment  {
+    private final static String LOG_TAG = "TrackDetailFragment";
 
+    View view;
     MapView mMapView;
     private GoogleMap googleMap;
     private MarkerOptions marker;
+    private List<LatLng> points;
+    private List<Map<String, Double>> properties;
+    private Map<String, Pair<Double, Double>> propertiesMinMax;
+    private List<String> propertyNames;
+    private TripDTO trip;
+    private TextView mapOverlayText;
+    int activeProperty;
+    private Fuel fuel;
+
+    private AlertDialog loadingDataDialog;
 
     Marker oldMarker = null;
 
     int i = 0;
 
+    public TrackDetailFragment() {
+        propertyNames = new ArrayList<>();
+        propertyNames.add("gps_speed_kmh");
+        propertyNames.add("engine_load");
+        propertyNames.add("engine_rpm");
+        propertyNames.add("air_temperature");
+        propertyNames.add("fuel_level");
+        propertyNames.add("kpl");
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // inflat and return the layout
-        View v = inflater.inflate(R.layout.fragment_trackdetail, container,
+
+        view = inflater.inflate(R.layout.fragment_trackdetail, container,
                 false);
-        mMapView = (MapView) v.findViewById(R.id.map);
+        trip = GlobalState.getInstance().getTrip();
+        mapOverlayText = (TextView)view.findViewById(R.id.map_overlay_text);
+        mapOverlayText.setTextColor(getResources().getColor(R.color.black));
+        activeProperty = 0;
+
+        initValues();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
+        loadingDataDialog = builder.create();
+
+
+        this.trip = GlobalState.getInstance().getTrip();
+
+        setHasOptionsMenu(true);
+
+        loadData();
+
+        mMapView = (MapView) view.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
 
-        mMapView.onResume();// needed to get the map to display immediately
+        return view;
+    }
 
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void initValues() {
+        ((TextView)view.findViewById(R.id.trip_distance_value)).setText(trip.getRouteLengthKMString() + " km");
+        ((TextView)view.findViewById(R.id.trip_time_value)).setText(trip.getStartDateTimeString());
+
+        Random random = new Random();
+        int grade = random.nextInt(4);
+        int color;
+        switch(grade) {
+            case 0:
+                color = getResources().getColor(R.color.red);
+                break;
+            case 1:
+                color = getResources().getColor(R.color.pink);
+                break;
+            case 2:
+                color = getResources().getColor(R.color.white);
+                break;
+            case 3:
+                color = getResources().getColor(R.color.light_green);
+                break;
+            default:
+                color = getResources().getColor(R.color.green);
+
+        }
+        String[] grades = getResources().getStringArray(R.array.grades);
+        ((TextView) view.findViewById(R.id.trip_rel_grade_value)).setText(grades[grade]);
+        ((TextView) view.findViewById(R.id.trip_rel_grade_value)).setTextColor(color);
+    }
+
+    public class MapOptionsSpinnerAdapater extends BaseAdapter implements SpinnerAdapter {
+        private final String[] content;
+        private final String[] descr;
+        private final Activity activity;
+
+        public MapOptionsSpinnerAdapater(String[] content, String[] descr, Activity activity) {
+            super();
+            this.content = content;
+            this.activity = activity;
+            this.descr = descr;
         }
 
-        googleMap = mMapView.getMap();
+        @Override
+        public int getCount() {
+            return content.length;
+        }
 
-        final List<LatLng> points = new ArrayList<>();
+        @Override
+        public Object getItem(int position) {
+            return content[position];
+        }
 
-        points.add(new LatLng(50.77738953, 6.0506326));
-        points.add(new LatLng(50.77748455, 6.05066935));
-        points.add(new LatLng(50.77759125, 6.05071736));
-        points.add(new LatLng(50.77768079, 6.05072467));
-        points.add(new LatLng(50.77779028, 6.05074427));
-        points.add(new LatLng(50.7778716, 6.05074275));
-        points.add(new LatLng(50.77796281, 6.05073447));
-        points.add(new LatLng(50.77806174, 6.05073929));
-        points.add(new LatLng(50.77814907, 6.05073025));
-        points.add(new LatLng(50.77823997, 6.05072323));
-        points.add(new LatLng(50.77834014, 6.0507206));
-        points.add(new LatLng(50.77843901, 6.05072018));
-        points.add(new LatLng(50.77851802, 6.05072098));
-        points.add(new LatLng(50.77860839, 6.0507293));
-        points.add(new LatLng(50.77870267, 6.05073978));
-        points.add(new LatLng(50.77880624, 6.0507502));
-        points.add(new LatLng(50.77890008, 6.05075494));
-        points.add(new LatLng(50.778999, 6.05075833));
-        points.add(new LatLng(50.77909419, 6.05076096));
-        points.add(new LatLng(50.77919114, 6.050766));
-        points.add(new LatLng(50.77928842, 6.05075884));
-        points.add(new LatLng(50.77937207, 6.05077311));
-        points.add(new LatLng(50.77944443, 6.05075204));
-        points.add(new LatLng(50.77951876, 6.05070456));
-        points.add(new LatLng(50.77957222, 6.05063038));
-        points.add(new LatLng(50.77961196, 6.05052134));
-        points.add(new LatLng(50.7796473, 6.05038746));
-        points.add(new LatLng(50.7796565, 6.05024479));
-        points.add(new LatLng(50.77966921, 6.05010021));
-        points.add(new LatLng(50.77968711, 6.04997215));
-        points.add(new LatLng(50.77969947, 6.04983225));
-        points.add(new LatLng(50.77971711, 6.04967865));
-        points.add(new LatLng(50.77972671, 6.0495379));
-        points.add(new LatLng(50.7797421, 6.04938855));
-        points.add(new LatLng(50.77977906, 6.04923104));
-        points.add(new LatLng(50.77980224, 6.0490869));
-        points.add(new LatLng(50.7798364, 6.04894165));
-        points.add(new LatLng(50.77987177, 6.04880086));
-        points.add(new LatLng(50.77990618, 6.04866036));
-        points.add(new LatLng(50.77994676, 6.04851869));
-        points.add(new LatLng(50.77998391, 6.04840211));
-        points.add(new LatLng(50.78002871, 6.04827382));
-        points.add(new LatLng(50.78007737, 6.04815162));
-        points.add(new LatLng(50.78012515, 6.04802826));
-        points.add(new LatLng(50.78017516, 6.04789351));
-        points.add(new LatLng(50.78021959, 6.04777573));
-        points.add(new LatLng(50.7802697, 6.04765921));
-        points.add(new LatLng(50.78032276, 6.04753061));
-        points.add(new LatLng(50.78036767, 6.04741817));
-        points.add(new LatLng(50.78042238, 6.04729628));
-        points.add(new LatLng(50.78047665, 6.04718832));
-        points.add(new LatLng(50.78052321, 6.04706797));
-        points.add(new LatLng(50.78058614, 6.04695197));
-        points.add(new LatLng(50.78063954, 6.0468551));
-        points.add(new LatLng(50.78069815, 6.04675694));
-        points.add(new LatLng(50.78076309, 6.04665112));
-        points.add(new LatLng(50.78081907, 6.04655938));
-        points.add(new LatLng(50.78088234, 6.04646374));
-        points.add(new LatLng(50.78094952, 6.04636542));
-        points.add(new LatLng(50.7810221, 6.04626881));
-        points.add(new LatLng(50.78109118, 6.04617696));
-        points.add(new LatLng(50.78115401, 6.04610577));
-        points.add(new LatLng(50.78121276, 6.04602175));
-        points.add(new LatLng(50.78128409, 6.04594667));
-        points.add(new LatLng(50.78134257, 6.04588171));
-        points.add(new LatLng(50.78140665, 6.045801));
-        points.add(new LatLng(50.78147374, 6.04572841));
-        points.add(new LatLng(50.78153384, 6.04565646));
-        points.add(new LatLng(50.78160923, 6.04557716));
-        points.add(new LatLng(50.78167009, 6.0455155));
-        points.add(new LatLng(50.78174119, 6.04544731));
-        points.add(new LatLng(50.78181188, 6.04537155));
-        points.add(new LatLng(50.78187393, 6.04531003));
-        points.add(new LatLng(50.78194238, 6.04524931));
-        points.add(new LatLng(50.78200873, 6.04518369));
-        points.add(new LatLng(50.78209874, 6.04510395));
-        points.add(new LatLng(50.78217778, 6.04502839));
-        points.add(new LatLng(50.78224999, 6.04497304));
-        points.add(new LatLng(50.78232635, 6.04491112));
-        points.add(new LatLng(50.78240957, 6.04484291));
-        points.add(new LatLng(50.78248179, 6.04478581));
-        points.add(new LatLng(50.78256175, 6.04472626));
-        points.add(new LatLng(50.78264221, 6.04466993));
-        points.add(new LatLng(50.7827259, 6.04461159));
-        points.add(new LatLng(50.78281521, 6.04455336));
-        points.add(new LatLng(50.78289458, 6.04450303));
-        points.add(new LatLng(50.78297918, 6.04444644));
-        points.add(new LatLng(50.78307173, 6.0443837));
-        points.add(new LatLng(50.78315752, 6.04433051));
-        points.add(new LatLng(50.78324828, 6.04427755));
-        points.add(new LatLng(50.78333571, 6.0442263));
-        points.add(new LatLng(50.78342868, 6.04416945));
-        points.add(new LatLng(50.78351939, 6.04412465));
-        points.add(new LatLng(50.78360381, 6.04408896));
-        points.add(new LatLng(50.78370917, 6.04404939));
-        points.add(new LatLng(50.78380874, 6.04400667));
-        points.add(new LatLng(50.78389342, 6.04396769));
-        points.add(new LatLng(50.78397928, 6.04393217));
-        points.add(new LatLng(50.784061, 6.04389806));
-        points.add(new LatLng(50.78415151, 6.0438506));
-        points.add(new LatLng(50.78425068, 6.04379958));
-        points.add(new LatLng(50.78433564, 6.04378227));
-        points.add(new LatLng(50.78443054, 6.04375223));
-        points.add(new LatLng(50.78452728, 6.04371919));
-        points.add(new LatLng(50.78461163, 6.04369291));
-        points.add(new LatLng(50.78470466, 6.04367111));
-        points.add(new LatLng(50.78480164, 6.04367165));
-        points.add(new LatLng(50.78489673, 6.04366708));
-        points.add(new LatLng(50.78500635, 6.0436563));
-        points.add(new LatLng(50.78509705, 6.04364559));
-        points.add(new LatLng(50.78519208, 6.0436395));
-        points.add(new LatLng(50.78529192, 6.0436362));
-        points.add(new LatLng(50.78538606, 6.04363644));
-        points.add(new LatLng(50.78547749, 6.04364206));
-        points.add(new LatLng(50.78557136, 6.04365061));
-        points.add(new LatLng(50.7856604, 6.04365994));
-        points.add(new LatLng(50.7857527, 6.04368475));
-        points.add(new LatLng(50.78582969, 6.04370724));
-        points.add(new LatLng(50.78591417, 6.04373768));
-        points.add(new LatLng(50.78600132, 6.04377083));
-        points.add(new LatLng(50.78608195, 6.04380239));
-        points.add(new LatLng(50.78616606, 6.04383797));
-        points.add(new LatLng(50.78625769, 6.04386483));
-        points.add(new LatLng(50.78634337, 6.04389628));
-        points.add(new LatLng(50.78642712, 6.04395393));
-        points.add(new LatLng(50.78650458, 6.04400529));
-        points.add(new LatLng(50.78658832, 6.04406353));
-        points.add(new LatLng(50.78667035, 6.04412682));
-        points.add(new LatLng(50.78675086, 6.04418285));
-        points.add(new LatLng(50.78683293, 6.04425392));
-        points.add(new LatLng(50.78691759, 6.04434427));
-        points.add(new LatLng(50.7869987, 6.0444214));
-        points.add(new LatLng(50.78709728, 6.0445227));
-        points.add(new LatLng(50.78716944, 6.04460643));
-        points.add(new LatLng(50.78724709, 6.04470408));
-        points.add(new LatLng(50.78731749, 6.04481995));
-        points.add(new LatLng(50.78738308, 6.04492224));
-        points.add(new LatLng(50.78745515, 6.04503181));
-        points.add(new LatLng(50.78751302, 6.04517063));
-        points.add(new LatLng(50.78757631, 6.04530016));
-        points.add(new LatLng(50.78764819, 6.04544033));
-        points.add(new LatLng(50.78769653, 6.04557971));
-        points.add(new LatLng(50.78774016, 6.04572111));
-        points.add(new LatLng(50.7877671, 6.04589908));
-        points.add(new LatLng(50.78779041, 6.04605571));
-        points.add(new LatLng(50.78781998, 6.04622246));
-        points.add(new LatLng(50.78783282, 6.04636695));
-        points.add(new LatLng(50.78784104, 6.04652263));
-        points.add(new LatLng(50.78785756, 6.04668236));
-        points.add(new LatLng(50.78786562, 6.04686001));
-        points.add(new LatLng(50.78787264, 6.04702941));
-        points.add(new LatLng(50.78788742, 6.04720567));
-        points.add(new LatLng(50.78789277, 6.04735055));
-        points.add(new LatLng(50.78789755, 6.04751674));
-        points.add(new LatLng(50.78789135, 6.04768727));
-        points.add(new LatLng(50.78788903, 6.0478431));
-        points.add(new LatLng(50.78788308, 6.04800633));
-        points.add(new LatLng(50.78789213, 6.04816357));
-        points.add(new LatLng(50.78788432, 6.04831662));
-        points.add(new LatLng(50.78788021, 6.04848551));
-        points.add(new LatLng(50.78786157, 6.04864195));
-        points.add(new LatLng(50.78784871, 6.04879583));
-        points.add(new LatLng(50.78782719, 6.04895887));
-        points.add(new LatLng(50.78781177, 6.04911677));
-        points.add(new LatLng(50.7877836, 6.0492809));
-        points.add(new LatLng(50.78775634, 6.0494309));
-        points.add(new LatLng(50.78772888, 6.04959274));
-        points.add(new LatLng(50.78769875, 6.04974502));
-        points.add(new LatLng(50.78766636, 6.0498856));
-        points.add(new LatLng(50.78763247, 6.05002559));
-        points.add(new LatLng(50.78759589, 6.05014959));
-        points.add(new LatLng(50.78753773, 6.05022281));
-        points.add(new LatLng(50.78747681, 6.05030831));
-        points.add(new LatLng(50.78742774, 6.05039022));
-        points.add(new LatLng(50.78741196, 6.05050394));
-        points.add(new LatLng(50.7874271, 6.05062103));
-        points.add(new LatLng(50.78745836, 6.05070175));
-        points.add(new LatLng(50.78750393, 6.05072712));
-        points.add(new LatLng(50.78759537, 6.05063241));
-        points.add(new LatLng(50.78762775, 6.05052314));
-        points.add(new LatLng(50.78760919, 6.05038816));
-        points.add(new LatLng(50.7875818, 6.05029096));
-        points.add(new LatLng(50.78750909, 6.05020982));
-        points.add(new LatLng(50.7874446, 6.05019029));
-        points.add(new LatLng(50.78741148, 6.05049294));
-        points.add(new LatLng(50.78742124, 6.05061311));
-        points.add(new LatLng(50.7874645, 6.05070557));
-        points.add(new LatLng(50.7874871, 6.05076133));
-        points.add(new LatLng(50.78756668, 6.05054282));
-        points.add(new LatLng(50.78755773, 6.05041689));
-        points.add(new LatLng(50.7874837, 6.05032946));
-        points.add(new LatLng(50.78744165, 6.05024516));
-        points.add(new LatLng(50.78739249, 6.05025623));
-        points.add(new LatLng(50.78731422, 6.05036338));
-        points.add(new LatLng(50.78716694, 6.05041933));
-        points.add(new LatLng(50.78703136, 6.05044984));
-        points.add(new LatLng(50.78688936, 6.05044734));
-        points.add(new LatLng(50.78676088, 6.05046381));
-        points.add(new LatLng(50.78662562, 6.05047483));
-        points.add(new LatLng(50.78648912, 6.05046934));
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
 
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final LayoutInflater inflater = activity.getLayoutInflater();
+            final View spinnerEntry = inflater.inflate(R.layout.spinner_textview, null);
+            final TextView firstLine = (TextView) spinnerEntry.findViewById(R.id.text_line1);
+            final TextView secondLine = (TextView) spinnerEntry.findViewById(R.id.text_line2);
+            firstLine.setText(content[position]);
+            secondLine.setText(descr[position]);
+
+            return spinnerEntry;
+        }
+    }
+
+    private void initMapDataSpinner() {
+        Spinner spinner = (Spinner)view.findViewById(R.id.map_data_spinner);
+        final String[] spinnerContent = getResources().getStringArray(R.array.map_data_type);
+        final String[] spinnerDescriptions = getResources().getStringArray(R.array.map_data_type_description);
+
+        final MapOptionsSpinnerAdapater adapter = new MapOptionsSpinnerAdapater(spinnerContent, spinnerDescriptions, getActivity());
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                createMarkersAndRoute(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_track, menu);
+        menu.findItem(R.id.action_save_raw).setVisible(true);
+        menu.findItem(R.id.action_share).setVisible(true);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId())
+        {
+            case R.id.action_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Sharing my AixCruise trip with you #codeFEST8");
+                sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + getActivity().getExternalFilesDir(null).getAbsolutePath() + "/dump/mapdump.png"));
+                sendIntent.setType("image/*");
+                startActivity(Intent.createChooser(sendIntent, "Share your AixCruise"));
+                break;
+            case R.id.action_save_raw:
+                // todo
+                break;
+            case R.id.action_delete:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Warning");
+                builder.setMessage("Do you want to delete the trip with id '" + trip.getId() + "'?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getActivity(), "Trip with id '" + trip.getId() + "' deleted!", Toast.LENGTH_SHORT).show();
+                        ((MainActivity)getActivity()).goToFragment(FragmentType.TrackHistory);
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.create().show();
+                break;
+        }
+        return true;
+    }
+    
+    private class TripPointsResponseCallback implements ResponseCallback {
+        @Override
+        public void success(JSONObject response) {
+
+        }
+
+        @Override
+        public void successArray(JSONArray response) {
+            points = new ArrayList<LatLng>(response.length());
+            try {
+                properties = new ArrayList<>();
+                propertiesMinMax = new HashMap<>();
+                for(int i = 0; i < propertyNames.size(); i++)
+                {
+                    propertiesMinMax.put(propertyNames.get(i), new Pair<>(Double.MAX_VALUE, Double.MIN_VALUE));
+                }
+
+                for (int i = 0; i < response.length(); i++) {
+                    JSONArray arr = response.getJSONArray(i);
+                    points.add(new LatLng(arr.getDouble(1), arr.getDouble(0)));
+
+                    Map tempMap = new HashMap<String, Double>();
+                    for(int j = 0; j < propertyNames.size(); j++)
+                    {
+                        int index = j+2; // shift because of prepended long and lat
+                        double tmpValue = arr.getDouble(index);
+                        tempMap.put(propertyNames.get(j), tmpValue);
+                        if(tmpValue < propertiesMinMax.get(propertyNames.get(j)).first)
+                        {
+                            propertiesMinMax.put(propertyNames.get(j),  new Pair<>(tmpValue, propertiesMinMax.get(propertyNames.get(j)).second));
+                        }
+                        if(tmpValue > propertiesMinMax.get(propertyNames.get(j)).second)
+                        {
+                            propertiesMinMax.put(propertyNames.get(j),  new Pair<>(propertiesMinMax.get(propertyNames.get(j)).first, tmpValue));
+                        }
+                    }
+
+                    properties.add(tempMap);
+                }
+
+            } catch (JSONException ex) {
+                UserMessagesHandler.getInstance().registerError("Error while parsing achievements list response.");
+                Log.e(LOG_TAG, ex.toString());
+            }
+            TripFuelResolver resolver = new TripFuelResolver(new TripFuelResponseCallback(), trip);
+            resolver.doRequestSingle();
+        }
+
+        @Override
+        public void fail(int code, String message) {
+            loadingDataDialog.dismiss();
+            UserMessagesHandler.getInstance().registerError("Could not load points array.");
+        }
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    class TripFuelResponseCallback implements ResponseCallback {
+
+        @Override
+        public void success(JSONObject response) {
+            loadingDataDialog.dismiss();
+            fuel = Fuel.fromJSON(response);
+            ((TextView)view.findViewById(R.id.trip_fuel_value)).setText(String.valueOf(round(fuel.getFuelEconomy(), 2))+" l");
+            startMap();
+            initMapDataSpinner();
+        }
+
+        @Override
+        public void successArray(JSONArray response) {
+
+        }
+
+        @Override
+        public void fail(int code, String message) {
+            loadingDataDialog.dismiss();
+            UserMessagesHandler.getInstance().registerError("Could not load trip fuel value.");
+        }
+    }
+
+    private void loadData() {
+        loadingDataDialog.show();
+        TripPointsResolver resolver = new TripPointsResolver(new TripPointsResponseCallback(), trip);
+        resolver.doRequestArray();
+    }
+
+    private void animateTo(LatLng currentPosition, double zoom, double bearing, double tilt, final int milliseconds) {
+
+        if (googleMap==null) return;
+        //googleMap.setMapType(paramMapMode);
+        //mCurrentPosition=new LatLng(lat,lon);
+
+        // animate camera jumps too much
+        // so we set the camera instantly to the next point
+
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(currentPosition,(float)zoom, (float)tilt, (float)bearing)));
+
+        // give Android a break so it can load tiles. If I start the animation
+        // without pause, no tile loading is done
+
+        mMapView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // keeping numbers small you get a nice scrolling effect
+                googleMap.animateCamera(CameraUpdateFactory.scrollBy(250 - (float) Math.random() * 500 - 250, 250 - (float) Math.random() * 500), milliseconds, null);
+
+            }
+        }, 500);
+    }
+
+    private void createMarkersAndRoute(int activeProperty)
+    {
+        googleMap.clear();
+        this.activeProperty = activeProperty;
 
         // create marker
         marker = new MarkerOptions().position(points.get(0)).title("Trip Start");
@@ -311,13 +413,23 @@ public class TrackDetailFragment extends Fragment  {
         googleMap.addMarker(marker);
 
         int distance = 5;
+        //int activeProperty = 0;
         for(int c = 0; c < points.size()-distance; c+=distance) {
+            double value = 0;
+            for(int i = 0; i < distance; i++)
+            {
+                int index = c+i;
+                value += properties.get(index).get(propertyNames.get(activeProperty));
+            }
+            value /= distance;
+
             float[] hsv = new float[3];
-            hsv[0] = ((float)(c-0)/(float)(points.size()-0))*360.0f;
+            hsv[0] = ((float)(value - propertiesMinMax.get(propertyNames.get(activeProperty)).first )/
+                    (float)(propertiesMinMax.get(propertyNames.get(activeProperty)).second - propertiesMinMax.get(propertyNames.get(activeProperty)).first))*360.0f;
             hsv[1] = 1.0f;
             hsv[2] = 0.9f;
             int color = new Color().HSVToColor(hsv);
-            Log.i("Color", String.valueOf(color));
+//            Log.i("Color", String.valueOf(color));
 
             PolylineOptions multiPoint = new PolylineOptions().color(color);
             int i = c > 0 ? -1 : 0;
@@ -328,141 +440,173 @@ public class TrackDetailFragment extends Fragment  {
             }
             googleMap.addPolyline(multiPoint);
         }
+    }
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(50.77738953, 6.0506326)).zoom(14).build();
+    private int animation_counter = 0;
 
+    private void startMap() {
+        mMapView.onResume();// needed to get the map to display immediately
 
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 100, new GoogleMap.CancelableCallback() {
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        googleMap = mMapView.getMap();
+
+        if(points.isEmpty())
+        {
+            Log.e("FATAL ERROR", "NO POINTS FOUND");
+            return;
+        }
+
+        // create marker
+        marker = new MarkerOptions().position(points.get(0)).title("Trip Start");
+        // Changing marker icon
+        marker.icon(BitmapDescriptorFactory
+                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+        // adding marker
+        googleMap.addMarker(marker);
+
+        // create marker
+        marker = new MarkerOptions().position(points.get(points.size()-1)).title("Trip End");
+        // Changing marker icon
+        marker.icon(BitmapDescriptorFactory
+                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        // adding marker
+        googleMap.addMarker(marker);
+
+        int distance = 5;
+        int activeProperty = 0;
+        for(int c = 0; c < points.size()-distance; c+=distance) {
+            double value = 0;
+            for(int i = 0; i < distance; i++)
+            {
+                int index = c+i;
+                value += properties.get(index).get(propertyNames.get(activeProperty));
+            }
+            value /= distance;
+
+            float[] hsv = new float[3];
+            hsv[0] = ((float)(value - propertiesMinMax.get(propertyNames.get(activeProperty)).first )/
+                    (float)(propertiesMinMax.get(propertyNames.get(activeProperty)).second - propertiesMinMax.get(propertyNames.get(activeProperty)).first))*360.0f;
+            hsv[1] = 1.0f;
+            hsv[2] = 0.9f;
+            int color = new Color().HSVToColor(hsv);
+            Log.i("Color", String.valueOf(color));
+
+            PolylineOptions multiPoint = new PolylineOptions().color(color);
+            int i = c > 0 ? -1 : 0;
+            for(; i+c < points.size(); i++) {
+                int id = c + i;
+                multiPoint.add(points.get(id));
+            }
+            googleMap.addPolyline(multiPoint);
+        }
+
+        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
-            public void onFinish() {
-                final Timer t = new Timer("updateTimer");
-                t.scheduleAtFixedRate(new TimerTask() {
+            public void onMapLoaded() {
+                googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
-                    public void run() {
-                        if(getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    i++;
-
-                                    if (i < points.size() - 1) {
-                                        LatLng cur = points.get(i);
-                                        LatLng nxt = points.get(i + 1);
-                                        Float heading = (float) computeHeading(cur, nxt);
-                                        CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
-                                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
-                                        if (oldMarker != null) {
-                                            oldMarker.remove();
-                                        }
-
-                                        MarkerOptions newMarker = new MarkerOptions()
-                                                .position(cur)
-                                                .title("Current Position")
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
-                                                .anchor(0.5f, 3.0f / 5.0f)
-                                                .rotation(1.0f / heading);
-                                        oldMarker = googleMap.addMarker(newMarker);
-                                    } else {
-                                        t.cancel();
-                                    }
-                                }
-                            });
+                    public void onSnapshotReady(Bitmap bitmap) {
+                        try
+                        {
+                            File path = new File(getActivity().getExternalFilesDir(null).getAbsolutePath() + "/dump");
+                            Log.i("AixCruise", path.getAbsolutePath());
+                            if(!path.exists()) path.mkdirs();
+                            File file = new File(path, "mapdump.png");
+                            FileOutputStream stream = new FileOutputStream(file, false);
+                            Log.i("AixCruise", file.getAbsolutePath());
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            stream.flush();
+                            stream.close();
+                            Toast.makeText(getActivity(), "Snapshot saved", Toast.LENGTH_SHORT).show();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.e("AixCruise", ex.getMessage());
                         }
                     }
-                }, 1000, 200);
-            }
-
-            @Override
-            public void onCancel() {
-
+                });
             }
         });
-/*
-        currentIndex++;
-        highLightMarker(currentIndex);
-*/
 
-//        int distance = 20;
-//        final int tilt = 45;
-//        final int zoomLevel = 16;
-//        final int turnSpeed = 100;
-//
-//        final Handler handler = new Handler();
-//        final double duration = 10000;
-//
-//        final Interpolator interpolator = new BounceInterpolator();
-//
-//        for(int c = 0; c < points.size()-distance; c+=distance) {
-//
-//            final double start = SystemClock.uptimeMillis();
-//            final LatLng beginPos = points.get(c);
-//            final LatLng endPos = points.get(c + distance);
-//
-//            Float heading = (float)computeHeading(beginPos, endPos);
-//
-//            //animateTo(endPos, 16, heading, tilt, 10000);
-//
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    double elapsed = SystemClock.uptimeMillis() - start;
-//                    float t = Math.max(
-//                            1 - interpolator.getInterpolation((float) (elapsed / duration)), 0);
-//
-//                    double lat = (1-t) * endPos.latitude + t * beginPos.latitude;
-//                    double lng = (1-t) * endPos.longitude + t * beginPos.longitude;
-//
-//                    Float heading = (float)computeHeading(beginPos, endPos);
-//
-//                    CameraPosition newCam =
-//                            new CameraPosition.Builder()
-//                                    .target(new LatLng(lat,lng))
-//                                    .bearing(heading)
-//                                    .tilt(tilt)
-//                                    .zoom(zoomLevel)
-//                                    .build();
-//
-//                    googleMap.animateCamera(
-//                            CameraUpdateFactory.newCameraPosition(newCam),
-//                            turnSpeed,
-//                            null
-//                    );
-//
-//                    if (t > 0.0) {
-//                        // Post again 16ms later.
-//                        handler.postDelayed(this, 32);
-//                    }
-//                }
-//            });
-//        }
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng ll : points)
+        {
+            builder.include(ll);
+        }
+        CameraUpdate initialUpdate = CameraUpdateFactory.newLatLngBounds(builder.build(), 20);
 
-        // Perform any camera updates here
-        return v;
+        googleMap.moveCamera(initialUpdate);
+
+        googleMap.setOnMapLongClickListener(longclicklistener);
     }
 
-    private void animateTo(LatLng currentPosition, double zoom, double bearing, double tilt, final int milliseconds) {
+    private GoogleMap.OnMapLongClickListener longclicklistener = new GoogleMap.OnMapLongClickListener() {
+        @Override
+        public void onMapLongClick(LatLng latLng) {
+            i = 0;
+            LatLng cur = points.get(i);
+            LatLng nxt = points.get(i + 1);
+            Float heading = (float) computeHeading(cur, nxt);
+            CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
+            if (oldMarker != null) {
+                oldMarker.remove();
+            }
+            MarkerOptions newMarker = new MarkerOptions()
+                    .position(cur)
+                    .title("Current Position")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
+                    .anchor(0.5f, 3.0f / 5.0f)
+                    .rotation(1.0f / heading);
+            oldMarker = googleMap.addMarker(newMarker);
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 200, new MyCallback());
+        }
+    };
 
-        if (googleMap==null) return;
-        //googleMap.setMapType(paramMapMode);
-        //mCurrentPosition=new LatLng(lat,lon);
+    private class MyCallback implements GoogleMap.CancelableCallback {
+        @Override
+        public void onFinish() {
+            i++;
+            if (i < points.size() - 1) {
+                LatLng cur = points.get(i);
+                LatLng nxt = points.get(i + 1);
+                Float heading = (float) computeHeading(cur, nxt);
+                CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
+                if (oldMarker != null) {
+                    oldMarker.remove();
+                }
+                MarkerOptions newMarker = new MarkerOptions()
+                        .position(cur)
+                        .title("Current Position")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
+                        .anchor(0.5f, 3.0f / 5.0f)
+                        .rotation(1.0f / heading);
+                oldMarker = googleMap.addMarker(newMarker);
+                mapOverlayText.setText(String.valueOf(round(properties.get(i).get(propertyNames.get(activeProperty)), 2)));
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos), 200, new MyCallback());
+            }
+            else
+            {
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (LatLng ll : points)
+                {
+                    builder.include(ll);
+                }
+                CameraUpdate initialUpdate = CameraUpdateFactory.newLatLngBounds(builder.build(), 20);
 
-        // animate camera jumps too much
-        // so we set the camera instantly to the next point
-
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(currentPosition,(float)zoom, (float)tilt, (float)bearing)));
-
-        // give Android a break so it can load tiles. If I start the animation
-        // without pause, no tile loading is done
-
-        mMapView.postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                // keeping numbers small you get a nice scrolling effect
-                googleMap.animateCamera(CameraUpdateFactory.scrollBy(250-(float)Math.random()*500-250, 250-(float)Math.random()*500),milliseconds,null);
-
-            }},500);
-    }
+                googleMap.moveCamera(initialUpdate);
+                googleMap.setOnMapLongClickListener(longclicklistener);
+            }
+        }
+        @Override
+        public void onCancel() {
+            googleMap.setOnMapLongClickListener(longclicklistener);
+        }
+    };
 
     /**
      * Returns the heading from one LatLng to another LatLng. Headings are

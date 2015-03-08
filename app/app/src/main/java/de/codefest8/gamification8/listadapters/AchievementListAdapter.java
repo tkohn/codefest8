@@ -9,11 +9,7 @@ import android.widget.TextView;
 
 import de.codefest8.gamification8.R;
 import de.codefest8.gamification8.models.AchievementDTO;
-import de.codefest8.gamification8.models.TripDTO;
 
-/**
- * Created by koerfer on 07.03.2015.
- */
 public class AchievementListAdapter extends ArrayAdapter<AchievementDTO> {
 
     private final Context context;
@@ -30,7 +26,10 @@ public class AchievementListAdapter extends ArrayAdapter<AchievementDTO> {
     {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.element_achievementlist, parent, false);
-        TextView textView = (TextView) view.findViewById(R.id.label);
+        TextView labelView = (TextView) view.findViewById(R.id.label);
+        TextView descrView = (TextView) view.findViewById(R.id.description);
+        labelView.setText(values[position].getName());
+        descrView.setText(Integer.toString(values[position].getPoints()) + " points achieved in this achievement!");
         return view;
     }
 
