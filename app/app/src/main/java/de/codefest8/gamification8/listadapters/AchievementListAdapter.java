@@ -31,7 +31,6 @@ public class AchievementListAdapter extends ArrayAdapter<AchievementDTO> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.element_achievementlist, parent, false);
         TextView textView = (TextView) view.findViewById(R.id.label);
-        textView.setText("dummy achievement");
         return view;
     }
 
