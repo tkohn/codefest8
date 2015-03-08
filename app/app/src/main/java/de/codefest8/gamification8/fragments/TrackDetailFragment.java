@@ -530,17 +530,20 @@ public class TrackDetailFragment extends Fragment  {
                                     LatLng cur = points.get(i);
                                     LatLng nxt = points.get(i + 1);
                                     Float heading = (float)computeHeading(cur, nxt);
-                                    CameraPosition pos = new CameraPosition.Builder().target(cur).bearing((float)computeHeading(cur, nxt)).tilt(45).zoom(16).build();
+                                    CameraPosition pos = new CameraPosition.Builder().target(cur).bearing(heading).tilt(45).zoom(16).build();
                                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
                                     if (oldMarker != null)
                                     {
                                         oldMarker.remove();
                                     }
-                                    //Marker newMarker = new MarkerOptions()
-                                     //       .position(cur)
-                                     //       .title("Current Position")
-                                     //       .icon(BitmapDescriptorFactory.fromResource(R.drawable.));
-                                    oldMarker = googleMap.addMarker(marker);
+
+                                    MarkerOptions newMarker = new MarkerOptions()
+                                            .position(cur)
+                                            .title("Current Position")
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.navi))
+                                            .anchor(0.5f, 3.0f / 5.0f)
+                                            .rotation(1.0f/heading);
+                                    oldMarker = googleMap.addMarker(newMarker);
                                 }
                                 else
                                 {
