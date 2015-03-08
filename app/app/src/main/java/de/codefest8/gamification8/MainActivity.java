@@ -62,8 +62,6 @@ public class MainActivity extends ActionBarActivity {
         this.getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
     }
 
-
-
     @Override
     public void onBackPressed() {
         if (this.drawerLayout.isDrawerOpen(drawerMenu))
