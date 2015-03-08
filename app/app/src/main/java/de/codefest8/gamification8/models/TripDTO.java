@@ -53,6 +53,11 @@ public class TripDTO {
         return sdf.format(this.getStartTime());
     }
 
+    public String getStartDateTimeString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("H:m dd. MMMM yyyy");
+        return sdf.format(this.getStartTime());
+    }
+
     public void setStartTime(Timestamp startTime) {
         this.startTime = startTime;
     }

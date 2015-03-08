@@ -110,8 +110,9 @@ public class TrackDetailFragment extends Fragment  {
     }
 
     public void initValues() {
-        ((TextView)view.findViewById(R.id.trip_distance_value)).setText(trip.getRouteLengthKMString());
-        ((TextView)view.findViewById(R.id.trip_time_value)).setText(trip.getStartTimeString());
+        ((TextView)view.findViewById(R.id.trip_distance_value)).setText(trip.getRouteLengthKMString() + " km");
+        ((TextView)view.findViewById(R.id.trip_time_value)).setText(trip.getStartDateTimeString());
+
         Random random = new Random();
         int grade = random.nextInt(4);
         int color = getResources().getColor(R.color.white);
@@ -184,6 +185,7 @@ public class TrackDetailFragment extends Fragment  {
 
         final MapOptionsSpinnerAdapater adapter = new MapOptionsSpinnerAdapater(spinnerContent, spinnerDescriptions, getActivity());
         spinner.setAdapter(adapter);
+
     }
 
     private class TripPointsResponseCallback implements ResponseCallback {
