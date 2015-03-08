@@ -38,6 +38,7 @@ public class FriendsListFragment extends ListFragment {
     UserDTO[] users = new UserDTO[0];
 
     AlertDialog loadingDataDialog;
+    UserDTO[] users;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,9 @@ public class FriendsListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(FriendDetailFragment.BUNDLE_KEY_USER_ID, users[position].getId());
+        ((MainActivity)this.getActivity()).setExchangeBundle(bundle);
         ((MainActivity)this.getActivity()).goToFragment(FragmentType.FriendDetail);
     }
 

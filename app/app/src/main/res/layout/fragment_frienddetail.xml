@@ -18,7 +18,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -32,13 +32,12 @@
                     android:id="@+id/friend_name"
                     android:text="@string/user_name"
                     android:layout_marginLeft="@dimen/user_detail_text_margin"
-                    android:layout_marginTop="@dimen/user_detail_text_margin" />
+                    android:layout_marginRight="@dimen/user_detail_text_margin"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/friend_name_value"
-                    android:layout_marginTop="@dimen/user_detail_text_margin" />
+                    android:id="@+id/friend_name_value" />
             </LinearLayout>
 
             <LinearLayout
@@ -52,15 +51,13 @@
                     android:id="@+id/friend_status"
                     android:text="@string/user_status"
                     android:layout_marginLeft="@dimen/user_detail_text_margin"
-                    android:layout_marginRight="@dimen/user_detail_text_margin"
-                    android:layout_marginTop="@dimen/user_detail_text_margin" />
+                    android:layout_marginRight="@dimen/user_detail_text_margin" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/user_status_driver"
-                    android:id="@+id/friend_status_value"
-                    android:layout_marginTop="@dimen/user_detail_text_margin" />
+                    android:id="@+id/friend_status_value" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -78,24 +75,24 @@
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"></TabWidget>
+                android:layout_height="wrap_content"/>
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-                <LinearLayout
-                    android:id="@+id/friend_tab_achievements"
+                <ListView
+                    android:id="@+id/friend_achievements_list"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical"/>
 
-                <LinearLayout
-                    android:id="@+id/friend_tab_trips"
+                <ListView
+                    android:id="@+id/friend_trips_list"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical"/>
 
             </FrameLayout>
         </LinearLayout>
