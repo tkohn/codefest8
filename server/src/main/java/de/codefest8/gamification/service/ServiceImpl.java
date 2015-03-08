@@ -49,7 +49,7 @@ public class ServiceImpl implements Service {
     public List<AchievementDTO> findAllAchievements(UserDTO userDTO) {
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
         List<AchievementDTO> achievementDTOs = new ArrayList<>();
-        for (Achievement elem: repository.findAllAchievement(mapper.map(userDTO, User.class))){
+        for (Achievement elem : repository.findAllAchievement(mapper.map(userDTO, User.class))) {
             achievementDTOs.add(mapper.map(elem, AchievementDTO.class));
         }
         return achievementDTOs;
@@ -59,10 +59,15 @@ public class ServiceImpl implements Service {
     public AchievementDTO findAchievement(UserDTO userDTO, AchievementDTO achievementDTO) {
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
         Achievement result = mapper.map(achievementDTO, Achievement.class);
-        result = repository.findAchievement(mapper.map(userDTO, User.class),result);
+        result = repository.findAchievement(mapper.map(userDTO, User.class), result);
         return mapper.map(result, AchievementDTO.class);
     }
 
+    @Override
+    public double[][] getTripPositions(TripDTO tripDTO) {
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+        return repository.getTripPositions(mapper.map(tripDTO, Trip.class));
+    }
 
     // ##### ##### ##### ##### Trip ##### ##### ##### #####
 

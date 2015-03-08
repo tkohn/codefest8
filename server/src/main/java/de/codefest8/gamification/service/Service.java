@@ -26,4 +26,6 @@ public interface Service {
     List<TripSimpleDTO> findAllTrips(UserDTO userDTO);
 
     TripSimpleDTO findTrip(UserDTO userDTO, TripDTO tripDTO);
+
+    double[][] getTripPositions(TripDTO tripDTO);
 }

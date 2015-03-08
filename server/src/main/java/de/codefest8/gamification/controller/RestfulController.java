@@ -65,5 +65,13 @@ public class RestfulController {
         return service.findTrip(new UserDTO(user_id), new TripDTO(trip_id));
     }
 
+    @GET
+    @Path("users/{user_id}/trips/{trip_id}/data")
+    @Produces(MediaType.APPLICATION_JSON)
+    public double[][] getTripData(@PathParam("user_id") long user_id,
+                                       @PathParam("trip_id") long trip_id) {
+        return service.getTripPositions(new TripDTO(trip_id));
+    }
+
 }
 

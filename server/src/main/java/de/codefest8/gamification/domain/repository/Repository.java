@@ -39,5 +39,5 @@ public interface Repository {
 
     double getRouteLength(Trip trip);
     Timestamp getStartTime(Trip trip);
-    double[][][][] getTripPositions(Trip trip, String property);
+    double[][] getTripPositions(Trip trip);
 }

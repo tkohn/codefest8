@@ -2,12 +2,10 @@ package de.codefest8.gamification.domain.repository.jpa;
 
 import de.codefest8.gamification.domain.model.Achievement;
 import de.codefest8.gamification.domain.model.Trip;
-import de.codefest8.gamification.domain.model.TripData;
 import de.codefest8.gamification.domain.model.User;
 import de.codefest8.gamification.domain.repository.Repository;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -130,18 +128,35 @@ public class JPARepositoryImpl implements Repository {
     }
 
     @Override
-    public double[][][][] getTripPositions(Trip trip, String property) {
+    public double[][] getTripPositions(Trip trip) {
         EntityManager manager = factory.createEntityManager();
-        Query query = manager.createNativeQuery("select ST_X(position::geometry) as long, ST_Y(position::geometry) as lat, ? as property from trip_data where trip_id = ?;");
+        Query query = manager.createNativeQuery("select ST_X(position::geometry) as long, ST_Y(position::geometry) as lat, gps_speed_kmh, engine_load, engine_rpm, air_temperature, fuel_level, kpl from trip_data where trip_id = ?;");
         query.setParameter(1, trip.getId());
-        query.setParameter(2, property);
-        List<Object[]> results = query.getResultList();
-        results.get(0);
-        results.get(0);
-        results.get(0);
-        results.get(0);
+        List<Object[]> resultList = query.getResultList();
+
+        //TODO MAGIC NUMBER
+        // size() x 3
+        // [long 0][lat 0][property 0]
+        // [long 1][lat 1][property 1]
+        //            ...
+        // [long x][lat x][property x]
+        double[][] results = new double[resultList.size()][8];
+
+        int pos = 0;
+        for (Object[] elem : resultList) {
+            for (int i = 0; i < results[pos].length; i++) {
+                if (elem[i] == null) {
+                    results[pos][i] = 0;
+                }else{
+                    results[pos][i] = (double) elem[i];
+                }
+
+            }
+
+            pos++;
+        }
 
         manager.close();
-        return new double[0][0][0][0];
+        return results;
     }
 }

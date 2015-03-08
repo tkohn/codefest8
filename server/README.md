@@ -103,3 +103,35 @@ Cache-Control: no-cache
     "routeLength": 8126.891131655675
 }
 ```
+
+Interessante Trip Daten für einen bestimmten Trip
+```
+GET http://137.226.183.140:8080/aix-cruise/api/v1/users/1/trips/1/data
+
+GET /aix-cruise/api/v1/users/1/trips/1/data HTTP/1.1
+Host: 137.226.183.140:8080
+Cache-Control: no-cache
+
+[
+    [
+        6.08639476,   /* long */
+        50.78242198,  /* lat*/
+        0,            /* gps_speed_kmh */
+        0,            /* engine_load */
+        0,            /* engine_rpm */
+        0,            /* air_temperature */
+        0,            /* fuel_level */
+        0             /* kpl */
+    ],
+    [
+        6.09679542,
+        50.77796613,
+        0,
+        28.235294342041016,
+        898.5,
+        6,
+        0,
+        0
+    ]
+]
+```
