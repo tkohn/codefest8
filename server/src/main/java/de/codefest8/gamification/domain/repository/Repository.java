@@ -1,5 +1,6 @@
 package de.codefest8.gamification.domain.repository;
 
+import de.codefest8.gamification.domain.model.Achievement;
 import de.codefest8.gamification.domain.model.Trip;
 import de.codefest8.gamification.domain.model.TripData;
 import de.codefest8.gamification.domain.model.User;
@@ -22,6 +23,12 @@ public interface Repository {
 
     List<User> findAllFriends(User user);
 
+    // ##### ##### ##### ##### Achievement ##### ##### ##### #####
+
+    List<Achievement> findAllAchievement(User User);
+
+    Achievement findAchievement(User user, Achievement achievement);
+
     // ##### ##### ##### ##### Trip ##### ##### ##### #####
 
     List<Trip> findAllTrips(User user);
@@ -32,4 +39,5 @@ public interface Repository {
 
     double getRouteLength(Trip trip);
     Timestamp getStartTime(Trip trip);
+    double[][][][] getTripPositions(Trip trip, String property);
 }

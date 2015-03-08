@@ -1,9 +1,6 @@
 package de.codefest8.gamification.controller;
 
-import de.codefest8.gamification.dto.TripDTO;
-import de.codefest8.gamification.dto.TripSimpleDTO;
-import de.codefest8.gamification.dto.UserDTO;
-import de.codefest8.gamification.dto.UserSimpleDTO;
+import de.codefest8.gamification.dto.*;
 import de.codefest8.gamification.service.Service;
 import de.codefest8.gamification.service.ServiceImpl;
 
@@ -38,6 +35,20 @@ public class RestfulController {
     @Produces(MediaType.APPLICATION_JSON)
     public UserSimpleDTO findUser(@PathParam("user_id") long user_id) {
         return service.findUser(new UserDTO(user_id));
+    }
+
+    @GET
+    @Path("users/{user_id}/achievements")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<AchievementDTO> findAllAchievements(@PathParam("user_id") long user_id) {
+        return service.findAllAchievements(new UserDTO(user_id));
+    }
+
+    @GET
+    @Path("users/{user_id}/achievements/{achievement_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public AchievementDTO findAllAchievement(@PathParam("user_id") long user_id, @PathParam("achievement_id") long achievement_id) {
+        return service.findAchievement(new UserDTO(user_id), new AchievementDTO(achievement_id));
     }
 
     @GET

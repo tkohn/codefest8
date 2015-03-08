@@ -1,9 +1,6 @@
 package de.codefest8.gamification.service;
 
-import de.codefest8.gamification.dto.TripDTO;
-import de.codefest8.gamification.dto.TripSimpleDTO;
-import de.codefest8.gamification.dto.UserDTO;
-import de.codefest8.gamification.dto.UserSimpleDTO;
+import de.codefest8.gamification.dto.*;
 
 import java.util.List;
 
@@ -17,6 +14,13 @@ public interface Service {
     List<UserSimpleDTO> findAllUser();
 
     UserSimpleDTO findUser(UserDTO userDTO);
+
+
+    // ##### ##### ##### ##### Achievement ##### ##### ##### #####
+    List<AchievementDTO> findAllAchievements(UserDTO userDTO);
+
+    AchievementDTO findAchievement(UserDTO userDTO, AchievementDTO achievementDTO);
+
 
     // ##### ##### ##### ##### Trip ##### ##### ##### #####
     List<TripSimpleDTO> findAllTrips(UserDTO userDTO);

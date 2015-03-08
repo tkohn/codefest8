@@ -18,6 +18,10 @@ public class AchievementDTO {
     public AchievementDTO() {
     }
 
+    public AchievementDTO(long id) {
+        this.id = id;
+    }
+
     public long getId() {
         return id;
     }

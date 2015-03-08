@@ -1,13 +1,11 @@
 package de.codefest8.gamification.service;
 
+import de.codefest8.gamification.domain.model.Achievement;
 import de.codefest8.gamification.domain.model.Trip;
 import de.codefest8.gamification.domain.model.User;
 import de.codefest8.gamification.domain.repository.Repository;
 import de.codefest8.gamification.domain.repository.RepositoryFactory;
-import de.codefest8.gamification.dto.TripDTO;
-import de.codefest8.gamification.dto.TripSimpleDTO;
-import de.codefest8.gamification.dto.UserDTO;
-import de.codefest8.gamification.dto.UserSimpleDTO;
+import de.codefest8.gamification.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -43,6 +41,28 @@ public class ServiceImpl implements Service {
         result = repository.findUser(result);
         return new UserSimpleDTO(mapper.map(result, UserDTO.class));
     }
+
+
+    // ##### ##### ##### ##### Achievement ##### ##### ##### #####
+
+    @Override
+    public List<AchievementDTO> findAllAchievements(UserDTO userDTO) {
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+        List<AchievementDTO> achievementDTOs = new ArrayList<>();
+        for (Achievement elem: repository.findAllAchievement(mapper.map(userDTO, User.class))){
+            achievementDTOs.add(mapper.map(elem, AchievementDTO.class));
+        }
+        return achievementDTOs;
+    }
+
+    @Override
+    public AchievementDTO findAchievement(UserDTO userDTO, AchievementDTO achievementDTO) {
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+        Achievement result = mapper.map(achievementDTO, Achievement.class);
+        result = repository.findAchievement(mapper.map(userDTO, User.class),result);
+        return mapper.map(result, AchievementDTO.class);
+    }
+
 
     // ##### ##### ##### ##### Trip ##### ##### ##### #####
 

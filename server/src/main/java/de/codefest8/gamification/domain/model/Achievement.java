@@ -9,8 +9,16 @@ import javax.persistence.*;
  */
 @Entity
 @Table
+@NamedQueries({
+        @NamedQuery(name = Achievement.FIND_BY_ID,
+                query = "SELECT e FROM User u, Achievement e WHERE u.id = e.user.id AND e.user.id = :user_id AND e.id = :achievement_id"),
+        @NamedQuery(name = Achievement.FIND_ALL, query = "SELECT e FROM Achievement e WHERE e.user.id = :user_id")
+})
 public class Achievement {
 
+    public static final String FIND_BY_ID = "findAchievement";
+    public static final String FIND_ALL = "findAllAchievement";
+    public static final String PARAMETER_ACHIEVMENT_ID = "achievement_id";
     @TableGenerator(name = "ACHIEVEMENT_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", allocationSize = 1)
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ACHIEVEMENT_GEN")
