@@ -1,4 +1,4 @@
-package de.codefest8.gamification8;
+package de.codefest8.gamification8.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+
+import de.codefest8.gamification8.R;
 
 /**
  * Created by koerfer on 07.03.2015.

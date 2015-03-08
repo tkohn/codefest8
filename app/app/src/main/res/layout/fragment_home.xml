@@ -30,7 +30,7 @@
         android:layout_marginRight="@dimen/recent_achivs_margin_left" />
 
     <fragment
-        android:name="de.codefest8.gamification8.TrackHistoryFragment"
+        android:name="de.codefest8.gamification8.fragments.TrackHistoryFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/short_achievements"/>

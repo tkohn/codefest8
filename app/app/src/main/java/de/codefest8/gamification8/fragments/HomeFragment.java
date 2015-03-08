@@ -1,4 +1,4 @@
-package de.codefest8.gamification8;
+package de.codefest8.gamification8.fragments;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import java.util.zip.Inflater;
+
+import de.codefest8.gamification8.R;
 
 public class HomeFragment extends Fragment {
     private CheckBox startButton;

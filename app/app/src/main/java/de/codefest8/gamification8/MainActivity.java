@@ -2,7 +2,6 @@ package de.codefest8.gamification8;
 
 import android.content.res.Configuration;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.content.res.TypedArray;
 import android.support.v4.app.FragmentTransaction;
@@ -14,7 +13,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import de.codefest8.gamification8.fragments.AboutFragment;
+import de.codefest8.gamification8.fragments.AchievementListFragment;
+import de.codefest8.gamification8.fragments.FragmentType;
+import de.codefest8.gamification8.fragments.FriendDetailFragment;
+import de.codefest8.gamification8.fragments.FriendsListFragment;
+import de.codefest8.gamification8.fragments.HomeFragment;
+import de.codefest8.gamification8.fragments.TrackDetailFragment;
+import de.codefest8.gamification8.fragments.TrackHistoryFragment;
+import de.codefest8.gamification8.listadapters.DrawerElementAdapter;
+import de.codefest8.gamification8.models.UserDTO;
 
 public class MainActivity extends ActionBarActivity {
     private final String ACTIVITY_NAME = "MainActivity";
@@ -32,6 +40,15 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        UserMessagesHandler.getInstance().setApplicationContext(getApplicationContext());
+
+        UserDTO user = new UserDTO();
+        user.setId(0);
+        user.setName("James Bond");
+        user.setPassword("topsecret");
+        GlobalState.getInstance().setUser(user);
+
         this.setContentView(R.layout.activity_main);
         this.currentTitle = ((String[])getResources().getStringArray(R.array.drawer_elements_name))[0];
         this.initDrawer();
@@ -143,7 +160,7 @@ public class MainActivity extends ActionBarActivity {
                 newFragment = new HomeFragment();
                 break;
             case FriendList:
-                newFragment = new FriendListFragment();
+                newFragment = new FriendsListFragment();
                 break;
             case FriendDetail:
                 newFragment = new FriendDetailFragment();
