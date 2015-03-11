@@ -14,7 +14,7 @@ import org.apache.http.Header;
  */
 public class AixHTTPClient {
     private static final String LOG_TAG = "AixHTTPClient";
-    private final static String SERVER_URL = "http://137.226.183.140:8080/aix-cruise/api/v1";
+    private final static String SERVER_URL = "http://137.226.183.140:7700/aix-cruise/api/v1";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
