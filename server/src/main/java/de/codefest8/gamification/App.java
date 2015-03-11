@@ -38,7 +38,7 @@ public class App {
         servletHolder.setInitOrder(0);
         servletHolder.setInitParameter("jersey.config.server.provider.classnames", RestfulController.class.getCanonicalName());
 
-        Server server = new Server(8080);
+        Server server = new Server(7700);
 
         ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/");
