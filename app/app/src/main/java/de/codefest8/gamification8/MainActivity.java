@@ -23,6 +23,7 @@ import de.codefest8.gamification8.fragments.FragmentType;
 import de.codefest8.gamification8.fragments.FriendDetailFragment;
 import de.codefest8.gamification8.fragments.FriendsListFragment;
 import de.codefest8.gamification8.fragments.HomeFragment;
+import de.codefest8.gamification8.fragments.SettingsFragment;
 import de.codefest8.gamification8.fragments.TrackDetailFragment;
 import de.codefest8.gamification8.fragments.TrackHistoryFragment;
 import de.codefest8.gamification8.listadapters.DrawerElementAdapter;
@@ -39,8 +40,6 @@ public class MainActivity extends ActionBarActivity {
     private TypedArray menuIcons;
     private DrawerElement[] menuEntries;
 
-    private Bundle exchangeBundle;
-
     private boolean closeMode = false;
     private FragmentType currentType = FragmentType.Home;
 
@@ -50,17 +49,13 @@ public class MainActivity extends ActionBarActivity {
 
         UserMessagesHandler.getInstance().setApplicationContext(getApplicationContext());
 
-        UserDTO user = new UserDTO();
-        user.setId(1);
-        user.setName("James Bond");
-        user.setPassword("topsecret");
-        GlobalState.getInstance().setUser(user);
-
         this.setContentView(R.layout.activity_main);
         this.initDrawer();
         Fragment firstFragment = new HomeFragment();
         this.getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
     }
+
+    private Toast clickAgainToast;
 
     @Override
     public void onBackPressed() {
@@ -75,7 +70,8 @@ public class MainActivity extends ActionBarActivity {
                     if (!closeMode)
                     {
                         closeMode = true;
-                        Toast.makeText(this, "Click 'back' again to close", Toast.LENGTH_SHORT).show();
+                        clickAgainToast = Toast.makeText(this, "Click 'back' again to close", Toast.LENGTH_SHORT);
+                        clickAgainToast.show();
                         Timer t = new Timer("close timer");
                         t.schedule(new TimerTask() {
                             @Override
@@ -91,6 +87,7 @@ public class MainActivity extends ActionBarActivity {
                     }
                     else
                     {
+                        clickAgainToast.cancel();
                         this.finish();
                     }
                     break;
@@ -109,14 +106,6 @@ public class MainActivity extends ActionBarActivity {
                     break;
             }
         }
-    }
-
-    public void setExchangeBundle(Bundle bundle) {
-        exchangeBundle = bundle;
-    }
-
-    public Bundle getExchangeBundle() {
-        return exchangeBundle;
     }
 
     private void initDrawer() {
@@ -139,27 +128,20 @@ public class MainActivity extends ActionBarActivity {
                 R.string.drawer_open,  /* "open drawer" description */
                 R.string.drawer_close  /* "close drawer" description */
         ) {
-
-            /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 getSupportActionBar().setTitle(FragmentType.getFragmentTitle(getBaseContext(), currentType));
             }
-
-            /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 getSupportActionBar().setTitle(R.string.drawler_active);
             }
         };
-
-        // Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -173,15 +155,18 @@ public class MainActivity extends ActionBarActivity {
                     goToFragment(FragmentType.Home);
                     break;
                 case 1:
-                    goToFragment(FragmentType.FriendList);
+                    goToFragment(FragmentType.Settings);
                     break;
                 case 2:
-                    goToFragment(FragmentType.TrackHistory);
+                    goToFragment(FragmentType.FriendList);
                     break;
                 case 3:
-                    goToFragment(FragmentType.AchievementList);
+                    goToFragment(FragmentType.TrackHistory);
                     break;
                 case 4:
+                    goToFragment(FragmentType.AchievementList);
+                    break;
+                case 5:
                     goToFragment(FragmentType.About);
                     break;
             }
@@ -203,6 +188,9 @@ public class MainActivity extends ActionBarActivity {
             default:
             case Home:
                 newFragment = new HomeFragment();
+                break;
+            case Settings:
+                newFragment = new SettingsFragment();
                 break;
             case FriendList:
                 newFragment = new FriendsListFragment();

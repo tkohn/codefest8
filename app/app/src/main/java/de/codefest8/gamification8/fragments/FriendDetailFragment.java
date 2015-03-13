@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.codefest8.gamification8.BundleKeys;
 import de.codefest8.gamification8.GlobalState;
 import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
@@ -38,8 +39,6 @@ import de.codefest8.gamification8.network.ResponseCallback;
 import de.codefest8.gamification8.network.UserResolver;
 
 public class FriendDetailFragment extends Fragment {
-    private static final String LOG_TAG = "FriendDetailFragment";
-    public static final String BUNDLE_KEY_USER_ID = "user_id";
 
     AlertDialog loadingDataDialog;
     long userId;
@@ -48,14 +47,12 @@ public class FriendDetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Bundle exchangeBundle = ((MainActivity)this.getActivity()).getExchangeBundle();
-        userId = exchangeBundle.getLong(BUNDLE_KEY_USER_ID);
+        this.setHasOptionsMenu(true);
+        Bundle exchangeBundle = this.getArguments();
+        userId = exchangeBundle.getLong(BundleKeys.KEY_USER_ID);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
-        loadingDataDialog = builder.create();
-
-        setHasOptionsMenu(true);
+        loadingDataDialog = builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data).create();
 
         loadData();
 
@@ -99,7 +96,6 @@ public class FriendDetailFragment extends Fragment {
     }
 
     public void fillInUserData() {
-        GlobalState.getInstance().setFriend(user);
         ((TextView) view.findViewById(R.id.friend_name_value)).setText(user.getName());
     }
 
@@ -110,8 +106,10 @@ public class FriendDetailFragment extends Fragment {
         ((ListView)view.findViewById(R.id.friend_trips_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                GlobalState.getInstance().setTrip(user.getTrips().get(position));
-                ((MainActivity)getActivity()).goToFragment(FragmentType.TrackDetail);
+                long tripId = user.getTrips().get(position).getId();
+                Bundle exchangeBundle = new Bundle();
+                exchangeBundle.putLong("KEY_TRIP_ID", tripId);
+                ((MainActivity)getActivity()).goToFragment(FragmentType.TrackDetail, exchangeBundle);
             }
         });
     }
@@ -133,7 +131,7 @@ public class FriendDetailFragment extends Fragment {
         public void success(JSONObject response) {
             user = UserDTO.fromJson(response);
             fillInUserData();
-            TripsResolver resolver = new TripsResolver(new UserTripsResolverCallback(), user);
+            TripsResolver resolver = new TripsResolver(new UserTripsResolverCallback(), userId);
             resolver.doRequestArray();
         }
 
@@ -167,12 +165,11 @@ public class FriendDetailFragment extends Fragment {
                 user.setTrips(new ArrayList<>(trips));
             } catch (JSONException ex) {
                 UserMessagesHandler.getInstance().registerError("Error while parsing trips list response.");
-                Log.e(LOG_TAG, ex.toString());
             }
 
             fillInTripsData();
 
-            AchievementsResolver resolver = new AchievementsResolver(new UserAchivementsResolverCallback(), user);
+            AchievementsResolver resolver = new AchievementsResolver(new UserAchivementsResolverCallback(), userId);
             resolver.doRequestArray();
         }
 
@@ -203,7 +200,6 @@ public class FriendDetailFragment extends Fragment {
                 user.setAchievements(new ArrayList<>(achievements));
             } catch (JSONException ex) {
                 UserMessagesHandler.getInstance().registerError("Error while parsing achievements list response.");
-                Log.e(LOG_TAG, ex.toString());
             }
 
             fillInAchievements();

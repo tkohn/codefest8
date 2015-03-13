@@ -5,15 +5,17 @@ import de.codefest8.gamification8.models.UserDTO;
 
 public class FriendsResolver extends AbstractResolver {
     private static final String URL_RELATIVE = "/users/";
-    private UserDTO user;
+
+    private long userId;
+
     /**
      * Get friends of the user.
      * @param callback
-     * @param user
+     * @param userId
      */
-    public FriendsResolver(ResponseCallback callback, UserDTO user) {
+    public FriendsResolver(ResponseCallback callback, long userId) {
         super(callback);
-        this.user = user;
+        this.userId = userId;
     }
 
     @Override

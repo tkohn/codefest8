@@ -78,6 +78,11 @@ import de.codefest8.gamification8.network.TripPointsResolver;
 public class TrackDetailFragment extends Fragment  {
     private final static String LOG_TAG = "TrackDetailFragment";
 
+    long tripId;
+    long userId;
+
+    TripDTO trip;
+
     View view;
     MapView mMapView;
     private GoogleMap googleMap;
@@ -86,7 +91,6 @@ public class TrackDetailFragment extends Fragment  {
     private List<Map<String, Double>> properties;
     private Map<String, Pair<Double, Double>> propertiesMinMax;
     private List<String> propertyNames;
-    private TripDTO trip;
     private TextView mapOverlayText;
     int activeProperty;
     private Fuel fuel;
@@ -108,26 +112,26 @@ public class TrackDetailFragment extends Fragment  {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Bundle exchangeBundle = this.getArguments();
+        this.tripId = exchangeBundle.getLong("KEY_TRIP_ID");
+        this.userId = exchangeBundle.getLong("KEY_USER_ID");
+        this.setHasOptionsMenu(true);
+
 
         view = inflater.inflate(R.layout.fragment_trackdetail, container,
                 false);
-        trip = GlobalState.getInstance().getTrip();
         mapOverlayText = (TextView)view.findViewById(R.id.map_overlay_text);
         mapOverlayText.setTextColor(getResources().getColor(R.color.black));
         activeProperty = 0;
 
-        initValues();
+        //initValues();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
         loadingDataDialog = builder.create();
 
 
-        this.trip = GlobalState.getInstance().getTrip();
-
-        setHasOptionsMenu(true);
 
         loadData();
 
@@ -319,7 +323,7 @@ public class TrackDetailFragment extends Fragment  {
                 UserMessagesHandler.getInstance().registerError("Error while parsing achievements list response.");
                 Log.e(LOG_TAG, ex.toString());
             }
-            TripFuelResolver resolver = new TripFuelResolver(new TripFuelResponseCallback(), trip);
+            TripFuelResolver resolver = new TripFuelResolver(new TripFuelResponseCallback(), tripId, userId);
             resolver.doRequestSingle();
         }
 
@@ -363,7 +367,7 @@ public class TrackDetailFragment extends Fragment  {
 
     private void loadData() {
         loadingDataDialog.show();
-        TripPointsResolver resolver = new TripPointsResolver(new TripPointsResponseCallback(), trip);
+        TripPointsResolver resolver = new TripPointsResolver(new TripPointsResponseCallback(), tripId, userId);
         resolver.doRequestArray();
     }
 

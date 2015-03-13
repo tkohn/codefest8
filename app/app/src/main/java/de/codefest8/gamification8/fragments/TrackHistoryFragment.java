@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.codefest8.gamification8.BundleKeys;
 import de.codefest8.gamification8.GlobalState;
 import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
@@ -49,8 +50,10 @@ public class TrackHistoryFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        GlobalState.getInstance().setTrip(trips[position]);
-        ((MainActivity)this.getActivity()).goToFragment(FragmentType.TrackDetail);
+        Bundle exchangeBundle = new Bundle();
+        exchangeBundle.putLong(BundleKeys.KEY_USER_ID, trips[position].getUserId());
+        exchangeBundle.putLong(BundleKeys.KEY_TRIP_ID, trips[position].getId());
+        ((MainActivity)this.getActivity()).goToFragment(FragmentType.TrackDetail, exchangeBundle);
     }
 
     @Override
@@ -141,7 +144,7 @@ public class TrackHistoryFragment extends ListFragment {
 
     private void loadData() {
         loadingDataDialog.show();
-        TripsResolver resolver = new TripsResolver(new UserTripsResolverCallback(), GlobalState.getInstance().getUser());
+        TripsResolver resolver = new TripsResolver(new UserTripsResolverCallback(), GlobalState.getInstance().getCurrentUserId());
         resolver.doRequestArray();
     }
 }

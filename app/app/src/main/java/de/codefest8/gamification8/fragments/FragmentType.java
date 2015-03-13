@@ -9,6 +9,7 @@ import de.codefest8.gamification8.R;
  */
 public enum FragmentType {
     Home,
+    Settings,
     FriendList,
     FriendDetail,
     TrackHistory,

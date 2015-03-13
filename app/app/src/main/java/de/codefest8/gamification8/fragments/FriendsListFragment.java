@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.codefest8.gamification8.BundleKeys;
 import de.codefest8.gamification8.GlobalState;
 import de.codefest8.gamification8.MainActivity;
 import de.codefest8.gamification8.R;
@@ -33,34 +34,32 @@ import de.codefest8.gamification8.network.ResponseCallback;
 
 public class FriendsListFragment extends ListFragment {
 
-    private final static String LOG_TAG = "FriendsListFragment";
-
     AlertDialog loadingDataDialog;
     UserDTO[] users;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data);
-        loadingDataDialog = builder.create();
-
-        loadData();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        loadingDataDialog = builder.setMessage(R.string.dialog_loading_data).setTitle(R.string.dialog_loading_data).create();
+
+        loadData();
+
         return inflater.inflate(R.layout.fragment_friendslist, container, false);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Bundle bundle = new Bundle();
-        bundle.putLong(FriendDetailFragment.BUNDLE_KEY_USER_ID, users[position].getId());
-        ((MainActivity)this.getActivity()).setExchangeBundle(bundle);
-        ((MainActivity)this.getActivity()).goToFragment(FragmentType.FriendDetail);
+        Bundle exchangeBundle = new Bundle();
+        exchangeBundle.putLong(BundleKeys.KEY_USER_ID, users[position].getId());
+        ((MainActivity)this.getActivity()).goToFragment(FragmentType.FriendDetail, exchangeBundle);
     }
 
     @Override
@@ -160,7 +159,6 @@ public class FriendsListFragment extends ListFragment {
                 }
             } catch (JSONException ex) {
                 UserMessagesHandler.getInstance().registerError("Error while parsing friends list response.");
-                Log.e(LOG_TAG, ex.toString());
             }
 
             FriendsListAdapter adapter = new FriendsListAdapter(getActivity(), users);
@@ -176,7 +174,7 @@ public class FriendsListFragment extends ListFragment {
 
     private void loadData() {
         loadingDataDialog.show();
-        FriendsResolver resolver = new FriendsResolver(new FriendsResolverCallback(), GlobalState.getInstance().getUser());
+        FriendsResolver resolver = new FriendsResolver(new FriendsResolverCallback(), GlobalState.getInstance().getCurrentUserId());
         resolver.doRequestArray();
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="catAixCruiseLogin"
+        android:title="AixCruise Login" >
+        <CheckBoxPreference
+            android:key="chkUpOnlyWifi2"
+            android:title="Upload trips on Wi-Fi only"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="catTripRec"
+        android:title="Trip Recording" >
+        <ListPreference
+            android:key="listBtDev"
+            android:title="Bluetooth device"
+            android:summary="- no device -" />
+        <CheckBoxPreference
+            android:key="chkUpOnlyWifi"
+            android:title="Upload trips on Wi-Fi only"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

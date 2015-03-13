@@ -129,7 +129,7 @@ public class AchievementListFragment extends ListFragment {
 
     private void loadData() {
         loadingDataDialog.show();
-        AchievementsResolver resolver = new AchievementsResolver(new AchievementsResolverCallback(), GlobalState.getInstance().getUser());
+        AchievementsResolver resolver = new AchievementsResolver(new AchievementsResolverCallback(), GlobalState.getInstance().getCurrentUserId());
         resolver.doRequestArray();
     }
 }

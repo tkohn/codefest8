@@ -7,15 +7,17 @@ public class TripPointsResolver extends AbstractResolver {
     private final static String URL_TRIPS = "/trips/";
     private final static String URL_DATA = "/data/";
 
-    TripDTO trip;
+    long tripId;
+    long userId;
 
-    public TripPointsResolver(ResponseCallback callback, TripDTO trip) {
+    public TripPointsResolver(ResponseCallback callback, long tripId, long userId) {
         super(callback);
-        this.trip = trip;
+        this.tripId = tripId;
+        this.userId = userId;
     }
 
     @Override
     protected String getRelativeRequestUrl() {
-        return URL_USER+trip.getUserId()+URL_TRIPS+trip.getId()+URL_DATA;
+        return URL_USER + String.valueOf(userId) + URL_TRIPS + String.valueOf(tripId) + URL_DATA;
     }
 }

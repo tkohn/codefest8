@@ -7,15 +7,17 @@ public class TripFuelResolver extends AbstractResolver {
     private final static String URL_TRIPS = "/trips/";
     private final static String URL_FUEL = "/fuel/";
 
-    private TripDTO trip;
+    private long tripId;
+    private long userId;
 
-    public TripFuelResolver(ResponseCallback callback, TripDTO trip) {
+    public TripFuelResolver(ResponseCallback callback, long tripId, long userId) {
         super(callback);
-        this.trip = trip;
+        this.tripId = tripId;
+        this.userId = userId;
     }
 
     @Override
     protected String getRelativeRequestUrl() {
-        return URL_USERS+trip.getUserId()+URL_TRIPS+trip.getId()+URL_FUEL;
+        return URL_USERS + String.valueOf(userId) + URL_TRIPS + String.valueOf(tripId) + URL_FUEL;
     }
 }

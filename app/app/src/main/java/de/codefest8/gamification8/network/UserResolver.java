@@ -4,9 +4,10 @@ import de.codefest8.gamification8.models.UserDTO;
 
 public class UserResolver extends AbstractResolver {
     private static final String URL_GENERAL = "/users/";
-    private Long userId;
 
-    public UserResolver(ResponseCallback callback, Long userId) {
+    private long userId;
+
+    public UserResolver(ResponseCallback callback, long userId) {
         super(callback);
         this.userId = userId;
     }
