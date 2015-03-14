@@ -3,10 +3,15 @@
     <PreferenceCategory
         android:key="catAixCruiseLogin"
         android:title="AixCruise Login" >
-        <CheckBoxPreference
-            android:key="chkUpOnlyWifi2"
-            android:title="Upload trips on Wi-Fi only"
-            android:defaultValue="false" />
+        <EditTextPreference
+            android:key="txtUsername"
+            android:title="Username"
+            android:hint="Username" />
+        <EditTextPreference
+            android:key="txtPassword"
+            android:title="Password"
+            android:password="true"
+            android:hint="Password" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="catTripRec"
