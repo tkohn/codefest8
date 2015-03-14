@@ -6,13 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import de.codefest8.gamification8.R;
-import de.codefest8.gamification8.RecordService;
+import de.codefest8.gamification8.service.RecordService;
 
 public class HomeFragment extends Fragment {
 
