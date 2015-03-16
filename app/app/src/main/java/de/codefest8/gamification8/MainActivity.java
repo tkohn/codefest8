@@ -27,6 +27,7 @@ import de.codefest8.gamification8.fragments.PreferencesFragment;
 import de.codefest8.gamification8.fragments.TrackDetailFragment;
 import de.codefest8.gamification8.fragments.TrackHistoryFragment;
 import de.codefest8.gamification8.listadapters.DrawerElementAdapter;
+import de.codefest8.gamification8.services.UploadReceiver;
 
 public class MainActivity extends ActionBarActivity {
     private final String ACTIVITY_NAME = "MainActivity";
@@ -50,8 +51,9 @@ public class MainActivity extends ActionBarActivity {
 
         this.setContentView(R.layout.activity_main);
         this.initDrawer();
-        Fragment firstFragment = new HomeFragment();
-        this.getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
+        this.getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new HomeFragment()).commit();
+
+        UploadReceiver.initiateRepeatingUpload(this);
     }
 
     private Toast clickAgainToast;

@@ -21,7 +21,9 @@ public class Preferences {
         return instance;
     }
 
-    private static final String PREFS_KEY = "aixcruise_prefs";
+    public static final String PREFS_KEY = "aixcruise_prefs";
+
+    public static final String FILENAMES_KEY = "filenames";
 
     private static final String USERNAME_KEY = "username";
     private static final String PASSWORD_KEY = "password";

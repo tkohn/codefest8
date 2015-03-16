@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import de.codefest8.gamification8.R;
-import de.codefest8.gamification8.service.RecordService;
+import de.codefest8.gamification8.services.RecordService;
 
 public class HomeFragment extends Fragment {
 
