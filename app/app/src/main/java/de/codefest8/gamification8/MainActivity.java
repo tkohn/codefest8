@@ -23,11 +23,10 @@ import de.codefest8.gamification8.fragments.FragmentType;
 import de.codefest8.gamification8.fragments.FriendDetailFragment;
 import de.codefest8.gamification8.fragments.FriendsListFragment;
 import de.codefest8.gamification8.fragments.HomeFragment;
-import de.codefest8.gamification8.fragments.SettingsFragment;
+import de.codefest8.gamification8.fragments.PreferencesFragment;
 import de.codefest8.gamification8.fragments.TrackDetailFragment;
 import de.codefest8.gamification8.fragments.TrackHistoryFragment;
 import de.codefest8.gamification8.listadapters.DrawerElementAdapter;
-import de.codefest8.gamification8.models.UserDTO;
 
 public class MainActivity extends ActionBarActivity {
     private final String ACTIVITY_NAME = "MainActivity";
@@ -91,6 +90,7 @@ public class MainActivity extends ActionBarActivity {
                         this.finish();
                     }
                     break;
+                case Settings:
                 case FriendList:
                 case AchievementList:
                 case TrackHistory:
@@ -190,7 +190,7 @@ public class MainActivity extends ActionBarActivity {
                 newFragment = new HomeFragment();
                 break;
             case Settings:
-                newFragment = new SettingsFragment();
+                newFragment = new PreferencesFragment();
                 break;
             case FriendList:
                 newFragment = new FriendsListFragment();

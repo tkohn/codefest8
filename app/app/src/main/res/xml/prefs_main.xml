@@ -18,12 +18,10 @@
         android:title="Trip Recording" >
         <ListPreference
             android:key="listBtDev"
-            android:title="Bluetooth device"
-            android:summary="- no device -" />
+            android:title="Bluetooth device" />
         <CheckBoxPreference
             android:key="chkUpOnlyWifi"
-            android:title="Upload trips on Wi-Fi only"
-            android:defaultValue="false" />
+            android:title="Upload trips on Wi-Fi only" />
     </PreferenceCategory>
 
 </PreferenceScreen>

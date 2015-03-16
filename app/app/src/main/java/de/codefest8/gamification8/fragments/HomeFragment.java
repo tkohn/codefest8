@@ -59,14 +59,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void startService() {
-        Intent serviceStartIntent = new Intent(this.getActivity(), RecordService.class);
+        Intent serviceStartIntent = new Intent(getActivity(), RecordService.class);
         getActivity().startService(serviceStartIntent);
     }
 
     private void stopService() {
-        Intent serviceStopIntent = new Intent(this.getActivity(), RecordService.class);
+        Intent serviceStopIntent = new Intent(getActivity(), RecordService.class);
         getActivity().stopService(serviceStopIntent);
-
     }
 
     private boolean isRecordServiceRunning() {
