@@ -32,6 +32,9 @@
 \usepackage{url}
 \usepackage{svg}
 \usepackage[toc,page]{appendix}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing}
+
 
 % Kaputte Zeilenumbrueche fixen
 \setlength{\emergencystretch}{1em}
@@ -80,12 +83,12 @@
 	\textbf{codeFEST 8}\\
 	\vspace*{2cm}
 	\Huge
-	\textbf{Projekt \"Aix Cruise\"}\\
+	\textbf{Projekt \glqq Aix Cruise\grqq}\\
 	\vspace*{0.5cm}
 	\large
 	\vspace*{1cm}
 	\Large
-	\textbf{Prototyp zur Gamification des Fahrerlebnisses "Aix Cruise"}\\
+	\textbf{Prototyp zur Gamification des Fahrerlebnisses \glqq Aix Cruise\grqq}\\
 	\vspace*{2cm}
 	
 	\vfill
@@ -94,7 +97,7 @@
 	\begin{tabular}{x{6cm}p{7.5cm}}
 		\rule{0mm}{5ex}\textbf{von:} & Alexander Devaykin \newline alexander.devaykin@rwth-aachen.de \\
 		\rule{0mm}{5ex}  & Torsten Kohn \newline hello@torstenkohn.de  \\
-		\rule{0mm}{5ex}  & Lukas Körfer \newline TODO: FIND ME  \\
+		\rule{0mm}{5ex}  & Lukas Körfer \newline lukas.koerfer@rwth-aachen.de  \\
 		\rule{0mm}{5ex}  & Kevin Leonardic \newline kevin.leonardic@rwth-aachen.de  \\
 		
 		\rule{0mm}{5ex}\textbf{Datum:} & \today \\ 
@@ -113,8 +116,8 @@
 
 %Das Dokument muss immer doppelt kompiliert werden, weil nach dem ersten Mal die meisten Änderungen noch nicht in der PDF-Datei zu sehen sind.
 \section{Einführung}
-Dieses Dokument soll grob die Funktionalität des Prototypen "Aix Cruise" welcher im Rahmen des codeFEST8 entstanden ist umreißen. Das Ziel hierbei ist eine Übersicht über bereits implementierte Features zu gewinnen sowie mögliche Ausblicke zu gewähren. Hierbei wird sowohl auf die verwendete Technologie, als auch die zugrundeliegenden Gedankengänge eingegangen.
-Bei "Aix Cruise" handelt es sich um ein Projekt welches auf spielerische Weise ( Stichwort "Gamification" ) das Fahrverhalten des Anwenders analysiert um ihm einen Anreiz zu geben dieses zu Verbessern. 
+Dieses Dokument soll grob die Funktionalität des Prototypen \glqq Aix Cruise\grqq welcher im Rahmen des codeFEST8 entstanden ist umreißen. Das Ziel hierbei ist eine Übersicht über bereits implementierte Features zu gewinnen sowie mögliche Ausblicke zu gewähren. Hierbei wird sowohl auf die verwendete Technologie, als auch die zugrundeliegenden Gedankengänge eingegangen.
+Bei \glqq Aix Cruise\grqq handelt es sich um ein Projekt welches auf spielerische Weise ( Stichwort "Gamification" ) das Fahrverhalten des Anwenders analysiert um ihm einen Anreiz zu geben dieses zu Verbessern. 
 Dabei soll es möglich sein sich mit Freunden zu vergleichen und seine Erfolge zu Teilen. Kern dieser Idee ist, dass der soziale Druck für akzeptables Fahrverhalten eine besserung desselben zur Folge hat.
 
 \rhead{Die App}
@@ -155,7 +158,64 @@ Momenten besteht die einzige Möglichkeit Daten zu Sammeln in der Nutzung von An
 Das Backend basiert auf selbst entwickelter Software welche nur für den Einsatz im kleinen Umfeld vorgesehen ist. Hier muss ein komplett neuer Ansatz her.
 Die Datenbank skaliert möglicherweise ab einem Punkt nicht mehr optimal. Dies müsste sorgfältig evaluiert werden um zukünftige Engpässe zu Vermeiden.
 
+\section{Impressionen}
+
+\begin{table}
+\begin{tabular}{c c}
+
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[scale=0.3]{images/main.png}
+  \caption{Start Bildschirm}
+  \label{main}
+\end{minipage}
+&
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[scale=0.3]{images/menu.png}
+  \caption{Menü}
+  \label{menu}
+\end{minipage}
+
+\end{tabular}
+\end{table}
+\begin{table}
+\begin{tabular}{c c}
+
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[scale=0.3]{images/friends.png}
+  \caption{Freunde}
+  \label{friends}
+\end{minipage}
 \pagebreak
+&
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[scale=0.3]{images/achievements.png}
+  \caption{\glqq Errungenschaften\grqq}
+  \label{achievements}
+\end{minipage}
+
+\end{tabular}
+\end{table}
+\begin{table}
+\begin{tabular}{c c}
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[scale=0.3]{images/trips.png}
+  \caption{Fahrtenübersicht}
+  \label{trips}
+\end{minipage}
+&
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[scale=0.3]{images/trip_detail.png}
+  \caption{Detailansicht Fahrt}
+  \label{main}
+\end{minipage}
+\end{tabular}
+\end{table}
 
 % Abstände Überschrift
 \titlespacing{\section}{0pt}{12pt plus 4pt minus 2pt}{-6pt plus 2pt minus 2pt}
@@ -168,7 +228,6 @@ Die Datenbank skaliert möglicherweise ab einem Punkt nicht mehr optimal. Dies m
 \renewcommand{\sectionmark}[1]{\markright{#1}}
 \renewcommand{\subsectionmark}[1]{}
 \renewcommand{\subsubsectionmark}[1]{}
-\lhead{Kapitel \thesection}
 \rhead{\rightmark}
 
 \onehalfspacing
@@ -176,7 +235,7 @@ Die Datenbank skaliert möglicherweise ab einem Punkt nicht mehr optimal. Dies m
 \renewcommand{\theHsection}{\arabic{section}}
 \setcounter{section}{0}
 \pagenumbering{arabic}
-\setcounter{page}{1}
+%\setcounter{page}{1}
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
